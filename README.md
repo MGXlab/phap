@@ -35,9 +35,13 @@ used during development.
 
 To get a working environment
 ```
-$ git clone 
+# Clone this repo
+$ git clone https://git.science.uu.nl/papanikos/phap.git
 
-# I am naming it `hp` here, you can call it whatever you like
+# Get in the dir
+$ cd phap
+
+# I am naming the environment `hp` here, you can call it whatever you like
 # Note the long notation --file flag; -f will not work.
 $ conda create -n hp --file=environment.txt
 
@@ -156,7 +160,7 @@ NC_015271.1     Escherichia_coli        1.0301523       Salmonella      0.495
 NC_023719.1     Bacillus        0.0012575098    Bacillus        0.55
 ```
 
-### Per tool output
+### Per tool
 * `tmp` directory
   * Contains one fasta file per input genome, along with other intermediate 
 files necessary for a smooth execution of the workflow **and the raw output 
@@ -172,3 +176,9 @@ of vhulk (under genomes/results/)**.
   * `results.csv`: Copy of the `results/sample/tmp/genomes/results/results.csv`
   * `predictions.tsv`: A selection of the 1st (`BIN/genome`), 10th (`final_prediction`) 
 11th (`entropy`) columns from file `results.csv`.
+
+### Logs
+
+Logs capturing stdout and stderr during execution of each rule are located in
+`workdir/logs/<sample_id>/*.log` files.
+
