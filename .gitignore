@@ -1,0 +1,17 @@
+*
+*.swp
+!workflow/*
+!workflow/Snakefile
+!workflow/
+!scripts
+!scripts/*
+!scripts/
+scripts/.snakemake*
+!config.yaml
+!samples.csv
+!environment.txt
+!LICENSE.md
+!README.md
+!rules
+!rules/*
+!.gitignore
