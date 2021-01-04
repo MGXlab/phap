@@ -6,7 +6,8 @@
 !workflow/scripts/
 !workflow/scripts/*
 workflow/scripts/.snakemake*
-!config.yaml
+!config/
+!config/*
 !samples.csv
 !environment.txt
 !LICENSE.md
