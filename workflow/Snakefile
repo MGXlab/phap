@@ -1,0 +1,123 @@
+def parse_samples_csv(samples_csv):
+	samples = {}
+	with open(samples_csv, 'r') as fin:
+		next(fin)
+		for line in fin:
+			fields = [f.strip() for f in line.split(',')]
+			samples[fields[0]] = fields[1]
+	return samples
+
+samples_dic = parse_samples_csv(config.get('samples_config', 'samples.csv'))
+
+SAMPLES = list(samples_dic.keys())
+TOOLS = ["vhulk", "rafah"]
+
+def get_sample_fasta(wc):
+	return samples_dic[wc.sample]
+
+def collect_prediction_tsvs(wc):
+	tsvs = []
+	for tool in TOOLS:
+		tool_tsv = "results/{}/{}/predictions.tsv".format(wc.sample, tool)
+		tsvs.append(tool_tsv)
+	return tsvs
+
+rule all:
+	input:
+		expand([
+			"results/{sample}/tmp/reflist.txt",
+			"results/{sample}/rafah/predictions.tsv",
+			"results/{sample}/vhulk/.done.txt",
+			"results/{sample}/vhulk/predictions.tsv",
+			"results/{sample}/all_predictions.tsv",
+			],
+			sample=SAMPLES)
+
+rule split_multifasta:
+	input:
+		multifasta_fp = get_sample_fasta
+	output:
+		genomes_dir = directory("results/{sample}/tmp/genomes"),
+		reflist = "results/{sample}/tmp/reflist.txt"
+	log: "logs/{sample}/split_multifasta.log"
+	shell:
+		"mkdir -p {output.genomes_dir} && "
+		"python workflow/scripts/split_multifasta.py "
+		"-i {input.multifasta_fp} "
+		"-o {output.genomes_dir} "
+		"--write-reflist &>{log}"
+
+
+rule run_rafah:
+	input:
+		fasta_dir = rules.split_multifasta.output.genomes_dir,
+		reflist = rules.split_multifasta.output.reflist
+	output:
+		seq_info = "results/{sample}/rafah/{sample}_Seq_Info.tsv"
+	params:
+		prefix = "results/{sample}/rafah/{sample}"
+	log:
+		"logs/{sample}/rafah.log"
+	container: 
+		"library://papanikos_182/default/rafah:0.1"
+	threads: 8
+	shell:
+		"RaFAH_v0.1.pl --genomes_dir {input.fasta_dir}/ "
+		"--extension fasta --threads {threads} "
+		"--file_prefix {params.prefix} "
+		"&>{log}"
+
+rule filter_rafah:
+	input:
+		seq_info = rules.run_rafah.output.seq_info
+	output:
+		rafah_tsv = "results/{sample}/rafah/predictions.tsv"
+	shell:
+		"tail -n+2 {input.seq_info} | cut -f1,6,7 | sort -k1 "
+		"> {output.rafah_tsv}"
+
+rule run_vhulk:
+	input:
+		fasta_dir = rules.split_multifasta.output.genomes_dir,
+		reflist = rules.split_multifasta.output.reflist
+	output:
+		done_txt = touch("results/{sample}/vhulk/.done.txt")
+	params:
+		input_dir = "results/{sample}/tmp/genomes"
+	log: 
+		"logs/{sample}/vhulk.log"
+	container:
+		"library://papanikos_182/default/vhulk:0.1"
+	threads: 8
+	shell:
+		"vHULK-v0.1.py -i {params.input_dir} "
+		"-t {threads} &>{log}"
+
+rule cp_vhulk_results:
+	input:
+		vhulk_raw = rules.run_vhulk.output.done_txt
+	output:
+		vhulk_csv = "results/{sample}/vhulk/results.csv"
+	shell:
+		"cp results/{wildcards.sample}/tmp/genomes/results/results.csv "
+		"{output.vhulk_csv}"
+
+rule filter_vhulk:
+	input:
+		vhulk_csv = rules.cp_vhulk_results.output.vhulk_csv
+	output:
+		vhulk_tsv = "results/{sample}/vhulk/predictions.tsv"
+	shell:
+		"tail -n+2 {input.vhulk_csv} | cut -d ',' -f 1,10,11 "
+		"| tr ',' '\t' | sort -k1 > {output.vhulk_tsv}"
+
+rule collect_hosts:
+	input:
+		collect_prediction_tsvs
+	output:
+		sample_tsv = "results/{sample}/all_predictions.tsv"
+	shell:
+		"echo -e 'contig\tvhulk_pred\tvhulk_score\trafah_pred\trafah_score' "
+		">{output.sample_tsv} && "
+		"paste <(cat {input[0]}) <(cut -f2,3 {input[1]}) "
+		">>{output.sample_tsv}"
