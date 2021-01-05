@@ -41,16 +41,16 @@ $ git clone https://git.science.uu.nl/papanikos/phap.git
 # Get in the dir
 $ cd phap
 
-# I am naming the environment `hp` here, you can call it whatever you like
+# I am naming the environment `phap` here, you can call it whatever you like
 # Note the long notation --file flag; -f will not work.
-$ conda create -n hp --file=environment.txt
+$ conda create -n phap --file=environment.txt
 
 # Activate it - use the name you gave above, if it is different
-$ conda activate hp
+$ conda activate phap
 
 # The (hp) prefix shows we have activated it
 # Check the snakemake version
-(hp) $ snakemake --version
+(phap) $ snakemake --version
 5.30.1
 ```
 
