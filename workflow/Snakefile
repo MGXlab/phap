@@ -1,3 +1,9 @@
+from pathlib import Path
+
+configfile: "config/config.yaml"
+
+DATA_DIR = Path(config.get("vhmnet").get("data_dir"))
+
 def parse_samples_csv(samples_csv):
 	samples = {}
 	with open(samples_csv, 'r') as fin:
@@ -7,10 +13,15 @@ def parse_samples_csv(samples_csv):
 			samples[fields[0]] = fields[1]
 	return samples
 
-samples_dic = parse_samples_csv(config.get('samples_config', 'samples.csv'))
+samples_dic = parse_samples_csv(config.get('samplesheet', 'samples.csv'))
 
 SAMPLES = list(samples_dic.keys())
-TOOLS = ["vhulk", "rafah"]
+TOOLS = [
+		"vhulk", 
+		"rafah", 
+		"vhmnet",
+		"wish",
+		]
 
 def get_sample_fasta(wc):
 	return samples_dic[wc.sample]
@@ -28,8 +39,14 @@ rule all:
 			"results/{sample}/tmp/reflist.txt",
 			"results/{sample}/rafah/predictions.tsv",
 			"results/{sample}/vhulk/.done.txt",
+			"results/{sample}/vhulk/results/results.csv",
 			"results/{sample}/vhulk/predictions.tsv",
+			"results/{sample}/vhmnet/.done.txt",
+			"results/{sample}/vhmnet/predictions.tsv",
 			"results/{sample}/all_predictions.tsv",
+			"results/{sample}/wish/prediction.list",
+			"results/{sample}/wish/llikelihood.matrix",
+			"results/{sample}/wish/predictions.tsv"
 			],
 			sample=SAMPLES)
 
@@ -47,11 +64,44 @@ rule split_multifasta:
 		"-o {output.genomes_dir} "
 		"--write-reflist &>{log}"
 
-
-rule run_rafah:
+# vHULK
+rule run_vhulk:
 	input:
 		fasta_dir = rules.split_multifasta.output.genomes_dir,
 		reflist = rules.split_multifasta.output.reflist
+	output:
+		done_txt = touch("results/{sample}/vhulk/.done.txt"),
+		results_csv = "results/{sample}/vhulk/results/results.csv"
+	params:
+		input_dir = "results/{sample}/tmp/genomes",
+		output_dir = "results/{sample}/vhulk"
+	log: 
+		"logs/{sample}/vhulk.log"
+	container:
+		"library://papanikos_182/default/vhulk:0.1"
+	threads: 8
+	shell:
+		"vHULK-v0.1.py -i {params.input_dir} "
+		"-t {threads} &>{log} && "
+		"mv {input.fasta_dir}/results {params.output_dir}"
+
+rule filter_vhulk:
+	input:
+		rules.run_vhulk.output.done_txt,
+		vhulk_csv = rules.run_vhulk.output.results_csv
+	output:
+		vhulk_tsv = "results/{sample}/vhulk/predictions.tsv"
+	shell:
+		"tail -n+2 {input.vhulk_csv} | cut -d ',' -f 1,10,11 "
+		"| tr ',' '\t' | sort -k1 > {output.vhulk_tsv}"
+
+# RAFAH
+rule run_rafah:
+	input:
+		# Run vhulk first since it writing in the input
+		rules.run_vhulk.output.done_txt,
+		fasta_dir = rules.split_multifasta.output.genomes_dir,
+		reflist = rules.split_multifasta.output.reflist,
 	output:
 		seq_info = "results/{sample}/rafah/{sample}_Seq_Info.tsv"
 	params:
@@ -75,49 +125,109 @@ rule filter_rafah:
 	shell:
 		"tail -n+2 {input.seq_info} | cut -f1,6,7 | sort -k1 "
 		"> {output.rafah_tsv}"
-
-rule run_vhulk:
+# VirHostMatcher-Net
+rule run_vhmnet:
 	input:
+		# Run vhulk first since it writing in the input
+		rules.run_vhulk.output.done_txt,
 		fasta_dir = rules.split_multifasta.output.genomes_dir,
-		reflist = rules.split_multifasta.output.reflist
+		reflist = rules.split_multifasta.output.reflist,
 	output:
-		done_txt = touch("results/{sample}/vhulk/.done.txt")
+		done = touch("results/{sample}/vhmnet/.done.txt")
 	params:
-		input_dir = "results/{sample}/tmp/genomes"
-	log: 
-		"logs/{sample}/vhulk.log"
-	container:
-		"library://papanikos_182/default/vhulk:0.1"
+		# use it with
+		# snakemake --singularity-args "-B /path/to/data/:/data" ...
+		data_dir = "/data",
+		#data_dir = DATA_DIR,
+		tmp_dir = "results/{sample}/vhmnet/tmp",
+		output_dir = "results/{sample}/vhmnet"
 	threads: 8
+	container:
+		"library://papanikos_182/default/vhmnet:0.1"
+	log:
+		"logs/{sample}/vhmnet.log"
 	shell:
-		"vHULK-v0.1.py -i {params.input_dir} "
-		"-t {threads} &>{log}"
+		"VirHostMatcher-Net.py -q {input.fasta_dir} "
+		"-t {threads} "
+		"-i {params.tmp_dir} "
+		"-d {params.data_dir} "
+		"-q {input.fasta_dir} "
+		"-o {params.output_dir} "
+		"&>{log}"
 
-rule cp_vhulk_results:
+rule filter_vhmnet:
 	input:
-		vhulk_raw = rules.run_vhulk.output.done_txt
+		rules.run_vhmnet.output.done
 	output:
-		vhulk_csv = "results/{sample}/vhulk/results.csv"
+		vhmnet_tsv = "results/{sample}/vhmnet/predictions.tsv"
+	params:
+		predictions_dir = "./results/{sample}/vhmnet/predictions"
 	shell:
-		"cp results/{wildcards.sample}/tmp/genomes/results/results.csv "
-		"{output.vhulk_csv}"
-
-rule filter_vhulk:
+		"""
+		for f in $(find -wholename "{params.predictions_dir}/*.csv" -type f);
+		do 
+			echo ${{f}};
+			contig_id=$(basename ${{f}} | sed -e 's/_prediction.csv//')
+			host_score=$(tail -n1 ${{f}} | cut -f8,10 -d',' | tr ',' '\t')
+			echo -e "$contig_id\t$host_score" >> {output.vhmnet_tsv}.tmp;
+		done
+		sort -k1 {output.vhmnet_tsv}.tmp > {output.vhmnet_tsv}
+		rm -f {output.vhmnet_tsv}.tmp
+		"""
+# WIsH
+rule run_wish:
 	input:
-		vhulk_csv = rules.cp_vhulk_results.output.vhulk_csv
+		# Run vhulk first since it writing in the input
+		rules.run_vhulk.output.done_txt,
+		fasta_dir = rules.split_multifasta.output.genomes_dir,
+		reflist = rules.split_multifasta.output.genomes_dir,
 	output:
-		vhulk_tsv = "results/{sample}/vhulk/predictions.tsv"
+		prediction_list = "results/{sample}/wish/prediction.list",
+		ll_mat = "results/{sample}/wish/llikelihood.matrix"
+	log:
+		"logs/{sample}/wish.log"
+	threads: 8
+	container:
+		"library://papanikos_182/default/wish:1.0"
+	params:
+		# snakemake --singularity-args binds the whole data dir to /data
+		# see run_vhmnet rule
+		models_dir = "/data/host_wish_model",
+		#models_dir = DATA_DIR.joinpath("host_wish_model"),
+		output_dir = "results/{sample}/wish"
 	shell:
-		"tail -n+2 {input.vhulk_csv} | cut -d ',' -f 1,10,11 "
-		"| tr ',' '\t' | sort -k1 > {output.vhulk_tsv}"
+		"mkdir -p {params.output_dir} && "
+		"WIsH -c predict -g {input.fasta_dir} "
+		"-t {threads} -b "
+		"-m {params.models_dir} -r {params.output_dir} "
+		"&>{log}"
 
+rule process_wish:
+	input:
+		prediction_list = rules.run_wish.output.prediction_list
+	output:
+		predictions_tsv = "results/{sample}/wish/predictions.tsv"
+	params:
+		hostTaxa_pkl = DATA_DIR.joinpath("tables/hostTaxa.pkl")
+	shell:
+		"python workflow/scripts/wish_add_taxonomy.py "
+		"-i {input.prediction_list} -t {params.hostTaxa_pkl} "
+		"-o {output.predictions_tsv}"
+
+
+# Aggregate
 rule collect_hosts:
 	input:
 		collect_prediction_tsvs
 	output:
 		sample_tsv = "results/{sample}/all_predictions.tsv"
 	shell:
-		"echo -e 'contig\tvhulk_pred\tvhulk_score\trafah_pred\trafah_score' "
+		"echo -e 'contig\tvhulk_pred\tvhulk_score\trafah_pred\trafah_score\t"
+		"vhmnet_pred\tvhmnet_score\twish_pred\twish_score'"
 		">{output.sample_tsv} && "
-		"paste <(cat {input[0]}) <(cut -f2,3 {input[1]}) "
+		"paste <(cat {input[0]}) "
+		"<(cut -f2,3 {input[1]}) "
+		"<(cut -f2,3 {input[2]}) "
+		"<(cut -f2,3 {input[3]}) "
 		">>{output.sample_tsv}"
+
