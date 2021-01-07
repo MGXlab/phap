@@ -7,10 +7,12 @@ When possible, tools **and** their dependencies are bundled in
 
 ## Current tools
 
-|Tool name (links to source) | Publication/Preprint |
+|Tool (source) | Publication/Preprint |
 |:------|:------|
-[RaFAh](https://sourceforge.net/projects/rafah/)|[Coutinho FH. et al. 2020](https://www.biorxiv.org/content/10.1101/2020.09.25.313155v1?rss=1)
-[vHuLK](https://github.com/soedinglab/wish)|[Amgarten D, et al., 2020](https://www.biorxiv.org/content/10.1101/2020.12.06.413476v1)
+[RaFAh](https://sourceforge.net/projects/rafah/)|[Coutinho F. H. et al. 2020](https://www.biorxiv.org/content/10.1101/2020.09.25.313155v1?rss=1)
+[vHuLK](https://github.com/LaboratorioBioinformatica/vHULK)|[Amgarten D. et al., 2020](https://www.biorxiv.org/content/10.1101/2020.12.06.413476v1)
+[VirHostMatcher-Net](https://github.com/WeiliWw/VirHostMatcher-Net)|[Wang W. et al., 2020](https://doi.org/10.1093/nargab/lqaa044])
+[WIsH](https://github.com/soedinglab/WIsH)|[Galiez G. et al., 2017](https://academic.oup.com/bioinformatics/article/33/19/3113/3964377)
 
 
 ## Installation
@@ -102,13 +104,19 @@ You can
 - Use `snakemake`'s `--config samplesheet=/path/to/my_samples.csv` when
 executing the wofkflow.
 
-### Models and other data dependencies
+### Models and data dependencies
 
+* RaFaH, vHULK
 For these tools there is no need to pre-download and setup anything - all 
-data and software dependencies are pulled with the singularity image.
+data and software dependencies required for running them are bundled within 
+the singularity image.
 
-* RaFaH
-* vHuLK
+* VirHostMatcher-Net, WIsH 
+
+Databases and models need to be downloaded from the VirHostMatcher data repo
+([see here](https://github.com/WeiliWw/VirHostMatcher-Net#downloading)). 
+WIsH models for the 62,493 host genomes used in their paper are also provided
+and are used here for WIsH predictions.
 
 ## Usage
 
@@ -116,8 +124,17 @@ Basic:
 ```
 # From within this directory
 # Make sure you have defined a samplesheet
-(hp)$ snakemake --use-singularity -j16
+(hp)$ snakemake --use-singularity -j16 \
+      --singularity-args "-B /path/to/databases/:/data"
 ```
+
+where `/path/to/database/` is the directory containing tables, WIsH models and
+CRISPR blasts databases 
+
+> Note
+> 
+> Binding the dir like this is required if the files are stored in some 
+> shared location and not on the local filesystem.
 
 ## Output
 
@@ -163,8 +180,7 @@ NC_023719.1     Bacillus        0.0012575098    Bacillus        0.55
 ### Per tool
 * `tmp` directory
   * Contains one fasta file per input genome, along with other intermediate 
-files necessary for a smooth execution of the workflow **and the raw output 
-of vhulk (under genomes/results/)**.
+files necessary for a smooth execution of the workflow.
 
 * `rafah`
   * All files prefixed with `<sample_id>_` are the rafah's raw output
