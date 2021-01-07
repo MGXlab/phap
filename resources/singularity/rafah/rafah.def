@@ -1,0 +1,58 @@
+Bootstrap: docker
+From: continuumio/miniconda3 
+
+%labels
+     Author "Felipe Coutinho"
+	 Maintainer papanikos_182
+     Version 0.1
+	 Source https://sourceforge.net/projects/rafah/
+	 Preprint https://www.biorxiv.org/content/10.1101/2020.09.25.313155v1
+
+%files
+    RaFAH_v0.1.pl /opt/conda/bin/
+	Predict_Host_RF.R /src/
+	HP_Ranger_Model_3_Valid_Cols.txt /opt/HP_Ranger_Model_3_Valid_Cols.txt
+    rafah_resources.tar.gz /opt/rafah_resources.tar.gz
+
+%environment
+    export PATH=/src:$PATH
+
+%post
+	# Update OS
+    apt update && apt upgrade -y
+
+	# Set up resources dirs for running RaFAH
+	mkdir -p /opt/resources
+	mv /opt/HP_Ranger_Model_3_Valid_Cols.txt /opt/resources
+	tar -xzvf /opt/rafah_resources.tar.gz -C /opt/resources && rm /opt/rafah_resources.tar.gz
+
+	# Install dependencies
+	conda config --add channels conda-forge
+	conda config --add channels default
+	conda config --add channels bioconda
+	conda config --add channels r
+	conda update -y conda	
+	conda install -y mamba
+	mamba install -y r=3.6 r-ranger perl-bioperl hmmer=3.1b2 prodigal=2.6
+	conda clean --all -y
+	
+
+%help
+	A container for RaFAH v0.1 [https://sourceforge.net/projects/rafah].
+	Main perl script is in /src .
+	Helper R script for models is in /src . 
+	Required data dependencies are stored in /opt/resources.
+
+	To run the help menu from RaFAH from this container execute
+
+	$ singularity exec shub://papanikos_182/rafah:0.1 perl RaFAH_v0.1.pl --help
+
+	To run an anlysis for all genomes stored in the /path/to/genomes/ (last slash is required),
+	with all files ending with .fasta and store the results in 
+	/path/to/outdir/prefix (several files will be written in the /path/to/outdir and prefixed with prefix_ ).
+
+	$ singularity exec shub://papanikos_182/rafah:0.1 \
+	perl RaFAH_v0.1.pl \
+	--genomes_dir /path/to/genomes/ \
+	--extension fasta \
+    --file_prefix /path/to/outdir/prefix

@@ -1,0 +1,45 @@
+Bootstrap: docker
+From: debian:latest 
+
+%labels
+     Maintainer papanikos_182
+     Version 0.1
+	 Source https://github.com/soedinglab/WIsH
+	 Publication https://academic.oup.com/bioinformatics/article/33/19/3113/3964377
+
+
+%environment
+	export PATH=/opt/wish:$PATH
+
+%post
+	# Update stuff
+	apt update && apt upgrade -y
+
+	# Install compile tools for compiling wish
+	apt install -y build-essential cmake make git
+	
+	# get source
+	git clone https://github.com/soedinglab/WIsH.git /opt/wish
+
+	# Get in there
+	cd /opt/wish
+	
+	# Compile it
+	cmake . && make
+
+	
+%help
+	A container for WIsH.
+
+	Source: https://github.com/soedinglab/WIsH
+
+	Models for host genomes are provided from VirHostMatcher-Net.
+
+	Example:
+	# Probably you need to bind the path/to/data/host_wish_model
+	$ singularity exec -B /path/to/data/host_wish_model:/data \
+	  WIsH -c predict -m /data \
+	  -g /path/to/phage/genomes/fastas \
+	  -r /path/to/results \
+	  -b
+
