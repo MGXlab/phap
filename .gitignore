@@ -15,4 +15,5 @@ workflow/scripts/.snakemake*
 !workflow/rules
 !workflow/rules/*
 !.gitignore
+!.gitattributes
 !resources/singularity/*
