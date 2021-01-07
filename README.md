@@ -143,44 +143,57 @@ Results are stored per sample according to the sample ids you provided in the
 sample sheet.
 For each sample, results for each tool are stored in directories named after 
 the tool. An example looks like this:
-```
-results/
-├── A
-│   ├── all_predictions.tsv
-│   ├── rafah
-│   │   ├── A_CDS.faa
-│   │   ├── A_CDS.fna
-│   │   ├── A_CDS.gff
-│   │   ├── A_CDSxMMSeqs_Clusters
-│   │   ├── A_Genomes.fasta
-│   │   ├── A_Genome_to_Domain_Score_Min_Score_50-Max_evalue_1e-05.tsv
-│   │   ├── A_Ranger_Model_3_Predictions.tsv
-│   │   ├── A_Seq_Info.tsv
-│   │   └── predictions.tsv
-│   ├── tmp
-│   │   ├── genomes
-│   │   └── reflist.txt
-│   └── vhulk
-│       ├── predictions.tsv
-│       └── results.csv
 
 ```
+results/A/
+├── all_predictions.tsv
+├── rafah
+│   ├── A_CDS.faa
+│   ├── A_CDS.fna
+│   ├── A_CDS.gff
+│   ├── A_CDSxMMSeqs_Clusters
+│   ├── A_Genomes.fasta
+│   ├── A_Genome_to_Domain_Score_Min_Score_50-Max_evalue_1e-05.tsv
+│   ├── A_Ranger_Model_3_Predictions.tsv
+│   ├── A_Seq_Info.tsv
+│   └── predictions.tsv
+├── tmp
+│   ├── genomes
+│   └── reflist.txt
+├── vhmnet
+│   ├── feature_values
+│   ├── predictions
+│   ├── predictions.tsv
+│   └── tmp
+├── vhulk
+│   ├── predictions.tsv
+│   └── results
+└── wish
+    ├── llikelihood.matrix
+	├── prediction.list
+	└── predictions.tsv
+```
+
+### Per sample 
 
 * `all_predictions.tsv`: Contains the best prediction per contig (rows) for 
 each tool along with its confidence/p-value/whatever single value each tool 
 uses to evaluate its confidence in the prediction.
+
 An example for three genomes:
+
 ```
-contig  vhulk_pred      vhulk_score     rafah_pred      rafah_score
-NC_005964.2     None    4.068828        Mycoplasma      0.461
-NC_015271.1     Escherichia_coli        1.0301523       Salmonella      0.495
-NC_023719.1     Bacillus        0.0012575098    Bacillus        0.55
+contig	vhulk_pred	vhulk_score	rafah_pred	rafah_score	vhmnet_pred	vhmnet_score	wish_pred	wish_score
+NC_005964.2	None	4.068828	Mycoplasma	0.461	Mycoplasma fermentans	0.9953	Bacteria;Tenericutes;Mollicutes;Mycoplasmatales;Mycoplasmataceae;Mycoplasma;Mycoplasma fermentans;Mycoplasma fermentans MF-I2	-1.2085700000000001
+NC_015271.1	Escherichia_coli	1.0301523	Salmonella	0.495	Muricauda pacifica	0.9968	Bacteria;Proteobacteria;Gammaproteobacteria;Enterobacterales;Enterobacteriaceae;Raoultella;Raoultella sp. NCTC 9187;Raoultella sp. NCTC 9187	-1.3869200000000002
+NC_023719.1	Bacillus	0.0012575098	Bacillus	0.55	Clostridium sp. LS	1.0000	Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Clostridium;Clostridium beijerinckii;Clostridium beijerinckii	-1.29454
 ```
 
-### Per tool
 * `tmp` directory
   * Contains one fasta file per input genome, along with other intermediate 
 files necessary for a smooth execution of the workflow.
+
+### Per tool
 
 * `rafah`
   * All files prefixed with `<sample_id>_` are the rafah's raw output
@@ -193,8 +206,18 @@ files necessary for a smooth execution of the workflow.
   * `predictions.tsv`: A selection of the 1st (`BIN/genome`), 10th (`final_prediction`) 
 11th (`entropy`) columns from file `results.csv`.
 
+* `vhmnet`
+  * Directories `feature_values` and `predictions` are the raw output
+  * Directory `tmp` is a temporary dir written by `VirHostMatcher-Net` for 
+doing its magic.
+  * `predictions.tsv` contain contig, host taxonomy and scores.
+
+* `wish`
+  * Files `llikelihood.matrix` and `prediction.list` are the raw output
+  * File `predictions.tsv` has contig, host taxonomy and **llikelihood** scores.
+
 ### Logs
 
-Logs capturing stdout and stderr during execution of each rule are located in
+Logs capturing stdout and stderr during execution of each rule can be found in
 `workdir/logs/<sample_id>/*.log` files.
 
