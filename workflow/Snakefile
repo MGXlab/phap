@@ -54,26 +54,26 @@ rule split_multifasta:
 	input:
 		multifasta_fp = get_sample_fasta
 	output:
-		genomes_dir = directory("results/{sample}/tmp/genomes"),
 		reflist = "results/{sample}/tmp/reflist.txt"
 	log: "logs/{sample}/split_multifasta.log"
+	params:
+		genomes_dir = "results/{sample}/tmp/genomes",
 	shell:
-		"mkdir -p {output.genomes_dir} && "
+		"mkdir -p {params.genomes_dir} && "
 		"python workflow/scripts/split_multifasta.py "
 		"-i {input.multifasta_fp} "
-		"-o {output.genomes_dir} "
+		"-o {params.genomes_dir} "
 		"--write-reflist &>{log}"
 
 # vHULK
 rule run_vhulk:
 	input:
-		fasta_dir = rules.split_multifasta.output.genomes_dir,
 		reflist = rules.split_multifasta.output.reflist
 	output:
 		done_txt = touch("results/{sample}/vhulk/.done.txt"),
 		results_csv = "results/{sample}/vhulk/results/results.csv"
 	params:
-		input_dir = "results/{sample}/tmp/genomes",
+		fasta_dir = "results/{sample}/tmp/genomes",
 		output_dir = "results/{sample}/vhulk"
 	log: 
 		"logs/{sample}/vhulk.log"
@@ -81,9 +81,9 @@ rule run_vhulk:
 		"library://papanikos_182/default/vhulk:0.1"
 	threads: 8
 	shell:
-		"vHULK-v0.1.py -i {params.input_dir} "
+		"vHULK-v0.1.py -i {params.fasta_dir} "
 		"-t {threads} &>{log} && "
-		"mv {input.fasta_dir}/results {params.output_dir}"
+		"mv {params.fasta_dir}/results {params.output_dir}"
 
 rule filter_vhulk:
 	input:
@@ -100,19 +100,19 @@ rule run_rafah:
 	input:
 		# Run vhulk first since it writing in the input
 		rules.run_vhulk.output.done_txt,
-		fasta_dir = rules.split_multifasta.output.genomes_dir,
 		reflist = rules.split_multifasta.output.reflist,
 	output:
 		seq_info = "results/{sample}/rafah/{sample}_Seq_Info.tsv"
 	params:
-		prefix = "results/{sample}/rafah/{sample}"
+		prefix = "results/{sample}/rafah/{sample}",
+		fasta_dir = "results/{sample}/tmp/genomes"
 	log:
 		"logs/{sample}/rafah.log"
 	container: 
 		"library://papanikos_182/default/rafah:0.1"
 	threads: 8
 	shell:
-		"RaFAH_v0.1.pl --genomes_dir {input.fasta_dir}/ "
+		"RaFAH_v0.1.pl --genomes_dir {params.fasta_dir}/ "
 		"--extension fasta --threads {threads} "
 		"--file_prefix {params.prefix} "
 		"&>{log}"
@@ -130,7 +130,6 @@ rule run_vhmnet:
 	input:
 		# Run vhulk first since it writing in the input
 		rules.run_vhulk.output.done_txt,
-		fasta_dir = rules.split_multifasta.output.genomes_dir,
 		reflist = rules.split_multifasta.output.reflist,
 	output:
 		done = touch("results/{sample}/vhmnet/.done.txt")
@@ -140,18 +139,19 @@ rule run_vhmnet:
 		data_dir = "/data",
 		#data_dir = DATA_DIR,
 		tmp_dir = "results/{sample}/vhmnet/tmp",
-		output_dir = "results/{sample}/vhmnet"
+		output_dir = "results/{sample}/vhmnet",
+		fasta_dir = "results/{sample}/tmp/genomes"
 	threads: 8
 	container:
 		"library://papanikos_182/default/vhmnet:0.1"
 	log:
 		"logs/{sample}/vhmnet.log"
 	shell:
-		"VirHostMatcher-Net.py -q {input.fasta_dir} "
+		"VirHostMatcher-Net.py -q {params.fasta_dir} "
 		"-t {threads} "
 		"-i {params.tmp_dir} "
 		"-d {params.data_dir} "
-		"-q {input.fasta_dir} "
+		"-q {params.fasta_dir} "
 		"-o {params.output_dir} "
 		"&>{log}"
 
@@ -179,8 +179,7 @@ rule run_wish:
 	input:
 		# Run vhulk first since it writing in the input
 		rules.run_vhulk.output.done_txt,
-		fasta_dir = rules.split_multifasta.output.genomes_dir,
-		reflist = rules.split_multifasta.output.genomes_dir,
+		reflist = rules.split_multifasta.output.reflist,
 	output:
 		prediction_list = "results/{sample}/wish/prediction.list",
 		ll_mat = "results/{sample}/wish/llikelihood.matrix"
@@ -194,10 +193,11 @@ rule run_wish:
 		# see run_vhmnet rule
 		models_dir = "/data/host_wish_model",
 		#models_dir = DATA_DIR.joinpath("host_wish_model"),
-		output_dir = "results/{sample}/wish"
+		output_dir = "results/{sample}/wish",
+		fasta_dir = "results/{sample}/tmp/genomes"
 	shell:
 		"mkdir -p {params.output_dir} && "
-		"WIsH -c predict -g {input.fasta_dir} "
+		"WIsH -c predict -g {params.fasta_dir} "
 		"-t {threads} -b "
 		"-m {params.models_dir} -r {params.output_dir} "
 		"&>{log}"
