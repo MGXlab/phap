@@ -2,8 +2,12 @@
 
 A snakemake workflow that wraps various phage-host prediction tools.
 
-When possible, tools **and** their dependencies are bundled in 
-[Singularity](https://sylabs.io/) containers.
+* Uses 
+[Singularity](https://sylabs.io/) containers for execution of all tools.
+When possible (i.e. the built image is not larger than a few `G`s), 
+tools **and** their dependencies are bundled in the same container. This means
+tou do not need to worry about getting models or any other external databases.
+
 
 ## Current tools
 
@@ -26,7 +30,8 @@ To run the workflow your will need
 
 ### Conda environemnt
 
-It is recommended to use a [conda environment](https://docs.conda.io/projects/conda/en/latest/).
+It is recommended to use a 
+[conda environment](https://docs.conda.io/projects/conda/en/latest/).
 The file `environment.txt` can be used to recreate the complete environment 
 used during development.
 
@@ -37,20 +42,17 @@ used during development.
 
 To get a working environment
 ```
-# Clone this repo
+# Clone this repo and get in there
 $ git clone https://git.science.uu.nl/papanikos/phap.git
-
-# Get in the dir
 $ cd phap
 
-# I am naming the environment `phap` here, you can call it whatever you like
 # Note the long notation --file flag; -f will not work.
 $ conda create -n phap --file=environment.txt
 
 # Activate it - use the name you gave above, if it is different
 $ conda activate phap
 
-# The (hp) prefix shows we have activated it
+# The (phap) prefix shows we have activated it
 # Check the snakemake version
 (phap) $ snakemake --version
 5.30.1
@@ -94,6 +96,7 @@ s02,/path/to/another.fna.gz
 ```
 
 > Note
+>
 > There is no need to follow any convention for the fasta file name to 
 > reflect the sample id. The values in the sample column are the ones to worry
 > about, as these are the ones used as wildcards within the Snakefile.
@@ -107,9 +110,10 @@ executing the wofkflow.
 ### Models and data dependencies
 
 * RaFaH, vHULK
+
 For these tools there is no need to pre-download and setup anything - all 
 data and software dependencies required for running them are bundled within 
-the singularity image.
+their respective singularity image.
 
 * VirHostMatcher-Net, WIsH 
 
@@ -118,13 +122,21 @@ Databases and models need to be downloaded from the VirHostMatcher data repo
 WIsH models for the 62,493 host genomes used in their paper are also provided
 and are used here for WIsH predictions.
 
+### Singularity containers
+
+Definition files, along with documentation of how to use them to build 
+the containers are in [resources/singularity](./resources/singularity).
+
+The pre-built containers are all available through the 
+[standard singularity library](https://cloud.sylabs.io/library/papanikos_182)
+
 ## Usage
 
 Basic:
 ```
 # From within this directory
 # Make sure you have defined a samplesheet
-(hp)$ snakemake --use-singularity -j16 \
+(phap)$ snakemake --use-singularity -j16 \
       --singularity-args "-B /path/to/databases/:/data"
 ```
 
