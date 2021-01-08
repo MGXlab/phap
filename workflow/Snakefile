@@ -37,18 +37,10 @@ rule all:
 	input:
 		expand([
 			"results/{sample}/tmp/reflist.txt",
-			"results/{sample}/rafah/predictions.tsv",
-			"results/{sample}/vhulk/.done.txt",
-			"results/{sample}/vhulk/results/results.csv",
-			"results/{sample}/vhulk/predictions.tsv",
-			"results/{sample}/vhmnet/.done.txt",
-			"results/{sample}/vhmnet/predictions.tsv",
+			"results/{sample}/{tool}/predictions.tsv",
 			"results/{sample}/all_predictions.tsv",
-			"results/{sample}/wish/prediction.list",
-			"results/{sample}/wish/llikelihood.matrix",
-			"results/{sample}/wish/predictions.tsv"
 			],
-			sample=SAMPLES)
+			sample=SAMPLES, tool= TOOLS)
 
 rule split_multifasta:
 	input:
