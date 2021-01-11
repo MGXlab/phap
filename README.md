@@ -82,17 +82,18 @@ a samplesheet (see below).
 
 ### Sample sheet
 
-You must define a samplesheet with two comma (`,`) separated columns and the
-header `sample,fasta`. Values from the `sample` column must be unique and
+You must define a samplesheet with two tab (`\t`) separated columns. The
+header line must contain two fields, `sample    fasta`. 
+Values from the `sample` column must be unique and
 are used as sample identifiers. Their corresponding `fasta` values must be
-valid paths to multifasta files with the phage sequences for that sample.
+valid paths to (multi)fasta files with the phage sequences for that sample.
 
 An example
 ```
-$ cat samples.csv
-sample,fasta
-s01,/path/to/s01.fna
-s02,/path/to/another.fna.gz
+$ cat samples.tsv
+sample	fasta
+s01	/path/to/s01.fna
+s02	/path/to/another.fna.gz
 ```
 
 > Note
@@ -102,9 +103,9 @@ s02,/path/to/another.fna.gz
 > about, as these are the ones used as wildcards within the Snakefile.
 
 You can
-- Fill in the location of the samplesheet within the `config.yml`.
-- Drop the file in the workdir - **Attention**: It should be named `samples.csv`
-- Use `snakemake`'s `--config samplesheet=/path/to/my_samples.csv` when
+- Fill in the location of the samplesheet within the `config/config.yaml`.
+- Drop the file in the workdir - **Attention**: It should be named `samples.tsv`
+- Use `snakemake`'s `--config samplesheet=/path/to/my_samples.tsv` when
 executing the wofkflow.
 
 ### Models and data dependencies
@@ -128,7 +129,7 @@ Definition files, along with documentation of how to use them to build
 the containers are in [resources/singularity](./resources/singularity).
 
 The pre-built containers are all available through the 
-[standard singularity library](https://cloud.sylabs.io/library/papanikos_182)
+[standard singularity library](https://cloud.sylabs.io/library/papanikos_182).
 
 ## Usage
 
