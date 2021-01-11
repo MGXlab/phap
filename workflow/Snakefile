@@ -2,18 +2,23 @@ from pathlib import Path
 
 configfile: "config/config.yaml"
 
+# This doesn't work for now
+# Need to bind mount the data directory on the containers
+# with --singularity-args "-B path/to/data_dir:/data"
 DATA_DIR = Path(config.get("vhmnet").get("data_dir"))
 
-def parse_samples_csv(samples_csv):
-	samples = {}
-	with open(samples_csv, 'r') as fin:
-		next(fin)
+def parse_samplesheet(samples_tsv):
+	samples_dic = {}
+	with open(samples_tsv, 'r') as fin:
+		header_line = fin.readline()
+		header_fields = [f.strip() for f in header_line.split('\t')]
+		assert header_fields == ['sample', 'fasta'], "Malformatted samplesheet"
 		for line in fin:
-			fields = [f.strip() for f in line.split(',')]
-			samples[fields[0]] = fields[1]
-	return samples
+			fields = [f.strip() for f in line.split('\t')]
+			samples_dic[fields[0]] = fields[1]
+	return samples_dic
 
-samples_dic = parse_samples_csv(config.get('samplesheet', 'samples.csv'))
+samples_dic = parse_samplesheet(config.get('samplesheet', 'samples.tsv'))
 
 SAMPLES = list(samples_dic.keys())
 TOOLS = [
@@ -117,6 +122,7 @@ rule filter_rafah:
 	shell:
 		"tail -n+2 {input.seq_info} | cut -f1,6,7 | sort -k1 "
 		"> {output.rafah_tsv}"
+
 # VirHostMatcher-Net
 rule run_vhmnet:
 	input:
@@ -158,7 +164,6 @@ rule filter_vhmnet:
 		"""
 		for f in $(find -wholename "{params.predictions_dir}/*.csv" -type f);
 		do 
-			echo ${{f}};
 			contig_id=$(basename ${{f}} | sed -e 's/_prediction.csv//')
 			host_score=$(tail -n1 ${{f}} | cut -f8,10 -d',' | tr ',' '\t')
 			echo -e "$contig_id\t$host_score" >> {output.vhmnet_tsv}.tmp;
