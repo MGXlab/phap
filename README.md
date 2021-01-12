@@ -111,7 +111,7 @@ executing the wofkflow.
 
 ### Models and data dependencies
 
-* RaFaH, vHULK
+* RaFaH, vHULK, HTP
 
 For these tools there is no need to pre-download and setup anything - all 
 data and software dependencies required for running them are bundled within 
@@ -162,6 +162,7 @@ the tool. An example looks like this:
 $ tree -L2 results/A
 results/A
 ├── all_predictions.tsv
+├── lca.tsv 
 ├── htp
 │   ├── predictions.tsv
 │   └── raw.txt
@@ -207,6 +208,16 @@ NC_015271.1     0.995161392517451       Escherichia_coli        1.0301523       
 NC_023719.1     0.9999957241187084      Bacillus        0.0012575098    Bacillus        0.55    Clostridium sp. LS      1.0000  Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Clostridium;Clostridium beijerinckii;Clostridium beijerinckii       -1.29454
 ```
 
+* File `lca.tsv`: Last Common Ancestor of predictions, based on taxonomy
+
+An example for the genomes above:
+```
+contig  name    rank    lca
+NC_005964.2     Mycoplasma      genus   2093
+NC_015271.1     Bacteria        superkingdom    2
+NC_023719.1     Firmicutes      phylum  1239
+```
+
 * `tmp` directory
   * Directory `genomes`: Contains one fasta file per input genome
   * File `reflist.txt`: An intermediate file that holds paths to all produced 
@@ -215,28 +226,33 @@ genome fastas (used as intermediate file to ensure smooth execution)
 ### Per tool
 
 * `htp`
+
   * File `raw.txt`: The raw output of `htp` per contig
   * File `predictions.tsv`: **Two**-column separated tsv with contig id and
 probability of host being a phage.
 
 * `rafah`
+
   * Files prefixed with `<sample_id>_` are the rafah's raw output
   * `predictions.tsv`: A selection of the 1st (`Contig`) , 6th 
 (`Predicted_Host`) and 7th (`Predicted_Host_Score`) columns from file 
 `<sample_id>_Seq_Info.tsv`
 
 * `vhulk`
+
   * File `results.csv`: Copy of the `results/sample/tmp/genomes/results/results.csv`
   * File `predictions.tsv`: A selection of the 1st (`BIN/genome`), 10th (`final_prediction`) 
 11th (`entropy`) columns from file `results.csv`.
 
 * `vhmnet`
+
   * Directories `feature_values` and `predictions` are the raw output
   * Directory `tmp` is a temporary dir written by `VirHostMatcher-Net` for 
 doing its magic.
   * File `predictions.tsv` contains contig, host taxonomy and scores.
 
 * `wish`
+
   * Files `llikelihood.matrix` and `prediction.list` are the raw output
   * File `predictions.tsv` has contig, host taxonomy and **llikelihood** scores.
 
