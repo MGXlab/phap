@@ -28,6 +28,7 @@ To run the workflow your will need
 - `snakemake > 5.x` (developed with `5.30.1`)
 - `singularity >= 3.6` (developed with `3.6.3`)
 - `biopython >= 1.78` (developed with `1.78`)
+- `ete3 >= 3.1.2` (developed with `3.1.2`)
 
 ### Conda environemnt
 
