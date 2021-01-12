@@ -54,6 +54,7 @@ rule all:
 			"results/{sample}/tmp/reflist.txt",
 			"results/{sample}/{tool}/predictions.tsv",
 			"results/{sample}/all_predictions.tsv",
+			"results/{sample}/lca.tsv"
 			],
 			sample=SAMPLES, tool= TOOLS)
 
@@ -282,3 +283,14 @@ rule collect_hosts:
 		"<(cut -f2,3 {input[3]}) "
 		">>{output.sample_tsv}"
 
+rule lca:
+	input:
+		predictions_tsv = rules.collect_hosts.output.sample_tsv
+	output:
+		lca_tsv = "results/{sample}/lca.tsv"
+	log:
+		"logs/{sample}/lca.log"
+	shell:
+		"python workflow/scripts/get_lca.py "
+		"-i {input.predictions_tsv} "
+		"-o {output.lca_tsv} &>{log}"
