@@ -1,0 +1,39 @@
+Bootstrap: docker
+From: continuumio/miniconda3 
+
+%labels
+	Author "Wojciech Gałan"
+	Maintainer papanikos_182
+    Version 1.0.2
+	Source https://github.com/wojciech-galan/viruses_classifier
+	Publication	https://www.nature.com/articles/s41598-019-39847-2
+
+%post
+	# Update OS
+    apt update && apt upgrade -y
+
+	# Install dependencies
+	conda config --add channels conda-forge
+	conda config --add channels default
+	conda config --add channels bioconda
+	conda config --add channels r
+	conda update -y conda	
+	
+	conda create -n htp python=2.7 scipy numpy scikit-learn pip
+
+	conda clean --all -y
+
+	echo ". /opt/conda/etc/profile.d/conda.sh" >> $SINGULARITY_ENVIRONMENT
+	echo "conda activate htp" >> $SINGULARITY_ENVIRONMENT
+
+	. /opt/conda/etc/profile.d/conda.sh
+	conda activate htp
+	pip install git+https://github.com/wojciech-galan/viruses_classifier.git
+	
+%help
+	A container for Host Taxon Predictor v0.1.2
+	[https://github.com/wojciech-galan/viruses_classifier].
+
+	To run htp help:
+
+	$ singularity exec library://papanikos_182/default/htp:1.0.2 viruses_classifier --help
