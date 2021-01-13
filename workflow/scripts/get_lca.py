@@ -46,6 +46,17 @@ def parse_arguments():
     return parser.parse_args()
 
 def get_taxid(name):
+    """
+    Get a list of full taxonomy for a given name
+
+    Args:
+      name: str: A string of the name to search for e.g.
+        'Escherichia coli' or 'Firmicutes'.
+    Return:
+      full_taxonomy: list: A list of the full lineage taxids
+
+        If the given `name` is 'None` returns 'None'
+    """
     if name == 'None':
         full_taxonomy = 'None'
     else:
@@ -55,30 +66,69 @@ def get_taxid(name):
     return full_taxonomy
 
 def translate_row(name_row):
+    """
+    Helper function to apply get_taxid on all columns
+    of a row in a pd.DataFrame
+
+    Args:
+      name_row: pd.Series: A row of taxon identifiers
+
+    Return:
+      -: list: A list where all given human readable
+        columns have been converted to lists of full
+        taxonomy NCBI integers
+    """
     return [get_taxid(i) for i in name_row]
 
+
 def all_equal(iterable):
-    "Returns True if all the elements are equal to each other"
+    # https://docs.python.org/3/library/itertools.html#itertools-recipes
+    """
+    Returns True if all the elements are equal to each other
+    """
     g = itertools.groupby(iterable)
     return next(g, True) and not next(g, False)
 
-def get_lca_dic(hosts_dic, ncbi):
+
+def get_lca_dic(hosts_df, ncbi):
+    """
+    Get the LCA of all entries in a row from pd.DataFrame
+
+    Input `hosts_df` has contig ids as index, with each
+    column corresponding to full taxonomy lists.
+
+    Args:
+      hosts_df: pd.DataFrame: Contigs as index, columns 
+        lists of full taxonomies
+      ncbi: ete3.NCBITaxa instance:
+
+    Return:
+      lca_dic: dict: A dictionary of the form
+        { contig_id: [ name , rank, lca ], ...}
+        name is the human readable name of the taxon,
+        rank is the human readable name of the rank,
+        lca is the taxid number of the lca
+
+    """
     lca_dic = {}
     for contig in hosts.index.values:
-        all_lineages = [i for i in hosts.loc[contig,] if i != "None"]
+        # E.g. [[1,2,3,4], [1,2,3], 'None']
+        all_lineages = [i for i in hosts_df.loc[contig,] if i != "None"]
+        # [[1,2,3,4], [1,2,3]]
         per_level = [i for i in itertools.zip_longest(*all_lineages)]
+        # [[1,1], [2,2], [3,3], [4, None]]
         for i in range(len(per_level)):
-            lca = per_level[i][0]
-            if all_equal(per_level[i+1]):
-                lca = per_level[i+1][0]
-            else:
+            lca = per_level[i][0] # First iteration, grab the root
+            if all_equal(per_level[i+1]): # True until index 3 (last)
+                lca = per_level[i+1][0] # 2
+            else: # When we reach the first list where all_equal fails
                 break
-        name_dic = ncbi.get_taxid_translator([lca])
-        name = name_dic[lca]
-        rank_dic = ncbi.get_rank([lca])
-        rank = rank_dic[lca]
-        lca_dic[contig] = [name, rank, lca]
-        
+        # Following the example LCA = 3
+        name_dic = ncbi.get_taxid_translator([lca]) # Translate to name
+        name = name_dic[lca] # Get the name
+        rank_dic = ncbi.get_rank([lca]) # Translate to rank
+        rank = rank_dic[lca] # Get the rank
+        lca_dic[contig] = [name, rank, lca] # Put them in a leas
     return lca_dic
 
 if __name__ == '__main__':
