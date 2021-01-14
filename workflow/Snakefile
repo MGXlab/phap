@@ -246,7 +246,7 @@ rule run_htp:
 			pred=$(viruses_classifier \
 					--classifier svc \
 					--nucleic_acid dna \
-					-p ${{f}} 2>{log.stderr)
+					-p ${{f}} 2>{log.stderr}
 			echo -e $contig_id\t$pred >> {output.htp_raw}
 		done
 		"""
