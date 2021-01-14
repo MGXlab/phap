@@ -161,6 +161,7 @@ rule run_vhmnet:
 	shell:
 		"VirHostMatcher-Net.py -q {params.fasta_dir} "
 		"-t {threads} "
+		"--short-contig "
 		"-i {params.tmp_dir} "
 		"-d {params.data_dir} "
 		"-q {params.fasta_dir} "
