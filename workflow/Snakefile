@@ -232,7 +232,7 @@ rule run_htp:
 	output:
 		htp_raw = "results/{sample}/htp/raw.txt"
 	log:
-		stderr = "logs/{sample}/htp.stderr}"
+		stderr = "logs/{sample}/htp.stderr"
 	params:
 		fasta_dir = "./results/{sample}/tmp/genomes"
 	container:
