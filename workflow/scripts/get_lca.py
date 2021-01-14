@@ -142,14 +142,26 @@ if __name__ == '__main__':
                        index_col='contig'
                        )
     prediction_cols = [c for c in data.columns if c.endswith('_pred')]
+
+    # Slice and make a copy to supress SettingWithCopyWarning
+    hosts = data[prediction_cols].copy()
+    # Set the data type to string so the sanitizing will work
+    for col in prediction_cols:
+        hosts[col] = hosts[col].astype('string')
+
     # Sanitize columns to be able to query the taxonomy
-    hosts = data[prediction_cols]
     if 'vhulk_pred' in prediction_cols:
-       hosts['vhulk_pred'] = hosts['vhulk_pred'].str.replace('_', ' ')
+        hosts['vhulk_pred'] = hosts['vhulk_pred'].str.replace('_', ' ')
 
     if 'wish_pred' in prediction_cols:
-        hosts['wish_pred'] =  [' '.join(i.split(';')[-2].split()[:2]) 
-                              for i in data['wish_pred'].values]
+        # Original is superkingdom;kingdom;...;species;name
+        # This selects species
+        hosts['wish_pred'] = hosts['wish_pred'].str.split(';').str.get(-2)
+        # This splits the species and gets the first 2 elements
+        # sometimes species contains strain info two
+        hosts['wish_pred'] = hosts['wish_pred'].str.split().str[:2]
+        # Rejoin the species in a single string `genus species`
+        hosts['wish_pred'] = hosts['wish_pred'].str.join(' ')
 
     hosts = hosts.apply(translate_row)
 
