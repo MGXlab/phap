@@ -4,9 +4,10 @@ A snakemake workflow that wraps various phage-host prediction tools.
 
 * Uses 
 [Singularity](https://sylabs.io/) containers for execution of all tools.
-When possible (i.e. the built image is not larger than a few `G`s), 
+When possible (i.e. the image is not larger than a few `G`s), 
 tools **and** their dependencies are bundled in the same container. This means
-tou do not need to worry about getting models or any other external databases.
+you do not need have to get models or any other external databases.
+* Calculates Last Common Ancestor of all tools per contig.
 
 
 ## Current tools
@@ -16,21 +17,30 @@ tou do not need to worry about getting models or any other external databases.
 [HTP](https://github.com/wojciech-galan/viruses_classifier)|[Gałan W. et al., 2019](https://www.nature.com/articles/s41598-019-39847-2)
 [RaFAh](https://sourceforge.net/projects/rafah/)|[Coutinho F. H. et al., 2020](https://www.biorxiv.org/content/10.1101/2020.09.25.313155v1?rss=1)
 [vHuLK](https://github.com/LaboratorioBioinformatica/vHULK)|[Amgarten D. et al., 2020](https://www.biorxiv.org/content/10.1101/2020.12.06.413476v1)
-[VirHostMatcher-Net](https://github.com/WeiliWw/VirHostMatcher-Net)|[Wang W. et al., 2020](https://doi.org/10.1093/nargab/lqaa044])
+[VirHostMatcher-Net](https://github.com/WeiliWw/VirHostMatcher-Net)|[Wang W. et al., 2020](https://doi.org/10.1093/nargab/lqaa044)
 [WIsH](https://github.com/soedinglab/WIsH)|[Galiez G. et al., 2017](https://academic.oup.com/bioinformatics/article/33/19/3113/3964377)
 
-
 ## Installation
+
 
 ### Dependencies
 
 To run the workflow your will need
 - `snakemake > 5.x` (developed with `5.30.1`)
 - `singularity >= 3.6` (developed with `3.6.3`)
+
+The following python packages are also required to be installed and available 
+in the execution environment
 - `biopython >= 1.78` (developed with `1.78`)
 - `ete3 >= 3.1.2` (developed with `3.1.2`)
 
-### Conda environemnt
+> The `ete3.NCBITaxa` class is used to get taxonomy information and calculate
+> the LCA of all predictions, when possible. This requires a `taxa.sqlite` 
+> to be available either in its default location
+> ( `~/.ete3toolkit/taxa.sqlite` ) or provided in the config. See more on
+> http://etetoolkit.org/docs/latest/tutorial/tutorial_ncbitaxonomy.html
+
+### Conda environment
 
 It is recommended to use a 
 [conda environment](https://docs.conda.io/projects/conda/en/latest/).
@@ -38,7 +48,10 @@ The file `environment.txt` can be used to recreate the complete environment
 used during development.
 
 > The provided `environment.txt` contains an explicit list of all packages,
-> produced with `conda list -n phap --explicit > environment.txt` .
+> produced with 
+>
+> `conda list -n phap --explicit > environment.txt`
+> 
 > This ensures all packages are exactly the same versions/builds, so we 
 > minimize the risk of running into dependencies issues
 
@@ -81,6 +94,12 @@ For each sample, **all viral contigs to be analyzed should be provided as a
 single multifasta** (can be `gz`ipped). 
 A mapping between sample ids and their corresponding fasta file is provided as
 a samplesheet (see below).
+
+### Size filtering
+
+All sequences smaller than 5000bp are filtered out.
+This is a hard requirement, mainly imposed by vHULK, and currently I 
+don't handle differential input.
 
 ### Sample sheet
 
@@ -133,23 +152,33 @@ the containers are in [resources/singularity](./resources/singularity).
 The pre-built containers are all available through the 
 [standard singularity library](https://cloud.sylabs.io/library/papanikos_182).
 
+
 ## Usage
+
+A dry-run (_always a good idea before each execution_)
+```
+(phap)$ snakemake -n --use-singluarity
+--singularity-args "-B /path/to/databases/data:/data"
+```
 
 Basic:
 ```
 # From within this directory
 # Make sure you have defined a samplesheet
-(phap)$ snakemake --use-singularity -j16 \
-      --singularity-args "-B /path/to/databases/:/data"
+(phap)$ snakemake -p --use-singularity -j16 \
+--singularity-args "-B /path/to/databases/data:/data"
 ```
 
-where `/path/to/database/` is the directory containing tables, WIsH models and
-CRISPR blasts databases 
+where `/path/to/database/data` is the directory containing tables, 
+WIsH models and CRISPR blasts databases.
 
-> Note
-> 
-> Binding the dir like this is required if the files are stored in some 
-> shared location and not on the local filesystem.
+* The `-j` flag controls the number of jobs (cores) to be run in parallel.
+Change this according yo your setup
+* The `-p` flag prints commands that are scheduled for executing. You can 
+* remove this
+* Binding the data dir with the `--signularity-args` is required (at least 
+in my tests). You **must also** provide it as a value in the config.yaml.
+
 
 ## Output
 
@@ -178,6 +207,7 @@ results/A
 │   ├── A_Seq_Info.tsv
 │   └── predictions.tsv
 ├── tmp
+│   ├── filtered.fa.gz 
 │   ├── genomes
 │   └── reflist.txt
 ├── vhmnet
@@ -214,15 +244,16 @@ NC_023719.1     0.9999957241187084      Bacillus        0.0012575098    Bacillus
 An example for the genomes above:
 ```
 contig  name    rank    lca
-NC_005964.2     Mycoplasma      genus   2093
-NC_015271.1     Bacteria        superkingdom    2
-NC_023719.1     Firmicutes      phylum  1239
+NC_005964.2	Mycoplasma	genus	2093
+NC_015271.1	Enterobacteriaceae	family	543
+NC_023719.1	Firmicutes	phylum	1239
 ```
 
 * `tmp` directory
   * Directory `genomes`: Contains one fasta file per input genome
   * File `reflist.txt`: An intermediate file that holds paths to all produced 
 genome fastas (used as intermediate file to ensure smooth execution)
+  * File `filtered.fa.gz`: Fasta files containing sequences > 5000 bp.
 
 ### Per tool
 
