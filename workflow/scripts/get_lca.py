@@ -57,6 +57,8 @@ def get_taxid(name):
 
         If the given `name` is 'None` returns 'None'
     """
+    if len(name.split()) > 2:
+        name = ' '.join(name.split()[:2])
     if name == 'None':
         full_taxonomy = 'None'
     else:
@@ -163,7 +165,7 @@ if __name__ == '__main__':
         # Rejoin the species in a single string `genus species`
         hosts['wish_pred'] = hosts['wish_pred'].str.join(' ')
 
-    hosts = hosts.apply(translate_row)
+    hosts = hosts.applymap(get_taxid)
 
     lca_data = get_lca_dic(hosts, ncbi)
     with open(args.output_fp, 'w') as fout:
