@@ -224,10 +224,12 @@ results/A
     └── predictions.tsv
 ```
 
-<details>
-<summary>Per sample</summary>
+###Per sample
+---
 
-* `all_predictions.tsv`: Contains the best prediction per contig (rows) for 
+<details>
+<summary>`all_predictions.tsv`</summary>
+Contains the best prediction per contig (rows) for 
 each tool along with its confidence/p-value/whatever-single-value each tool 
 uses to evaluate its confidence in the prediction.
 
@@ -239,8 +241,11 @@ NC_005964.2     0.8464285626352002      None    4.068828        Mycoplasma      
 NC_015271.1     0.995161392517451       Escherichia_coli        1.0301523       Salmonella      0.495   Muricauda pacifica      0.9968  Bacteria;Proteobacteria;Gammaproteobacteria;Enterobacterales;Enterobacteriaceae;Raoultella;Raoultella sp. NCTC 9187;Raoultella sp. NCTC 9187       -1.3869200000000002
 NC_023719.1     0.9999957241187084      Bacillus        0.0012575098    Bacillus        0.55    Clostridium sp. LS      1.0000  Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Clostridium;Clostridium beijerinckii;Clostridium beijerinckii       -1.29454
 ```
+</details>
 
-* File `lca.tsv`: Last Common Ancestor of predictions, based on taxonomy
+<details>
+<summary>`lca.tsv`</summary> 
+Last Common Ancestor of predictions, based on taxonomy
 
 An example for the genomes above:
 ```
@@ -249,8 +254,10 @@ NC_005964.2	Mycoplasma	genus	2093
 NC_015271.1	Enterobacteriaceae	family	543
 NC_023719.1	Firmicutes	phylum	1239
 ```
+</details>
 
-* `tmp` directory
+<details>
+<summary>`tmp` (dir)</summary>
   * Directory `genomes`: Contains one fasta file per input genome
   * File `reflist.txt`: An intermediate file that holds paths to all produced 
 genome fastas (used as intermediate file to ensure smooth execution)
@@ -259,36 +266,47 @@ genome fastas (used as intermediate file to ensure smooth execution)
 
 ### Per tool
 
-* `htp`
+<details>
+<summary>`htp`</summary>
 
   * File `raw.txt`: The raw output of `htp` per contig
   * File `predictions.tsv`: **Two**-column separated tsv with contig id and
 probability of host being a phage.
+</details>
 
-* `rafah`
+<details>
+<summary>`rafah`</summary>
 
   * Files prefixed with `<sample_id>_` are the rafah's raw output
   * `predictions.tsv`: A selection of the 1st (`Contig`) , 6th 
 (`Predicted_Host`) and 7th (`Predicted_Host_Score`) columns from file 
 `<sample_id>_Seq_Info.tsv`
+</details>
 
-* `vhulk`
+<details>
+<summary>`vhulk`</summary>
 
   * File `results.csv`: Copy of the `results/sample/tmp/genomes/results/results.csv`
   * File `predictions.tsv`: A selection of the 1st (`BIN/genome`), 10th (`final_prediction`) 
 11th (`entropy`) columns from file `results.csv`.
+</details>
 
-* `vhmnet`
+<details>
+<summary>`vhmnet`</summary>
 
   * Directories `feature_values` and `predictions` are the raw output
   * Directory `tmp` is a temporary dir written by `VirHostMatcher-Net` for 
 doing its magic.
   * File `predictions.tsv` contains contig, host taxonomy and scores.
+</details>
 
-* `wish`
+<details>
+<summary>`wish`</summary>
 
   * Files `llikelihood.matrix` and `prediction.list` are the raw output
   * File `predictions.tsv` has contig, host taxonomy and **llikelihood** scores.
+</details>
+
 
 ### Logs
 
