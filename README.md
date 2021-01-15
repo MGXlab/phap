@@ -224,7 +224,8 @@ results/A
     └── predictions.tsv
 ```
 
-### Per sample 
+<details>
+<summary>Per sample</summary>
 
 * `all_predictions.tsv`: Contains the best prediction per contig (rows) for 
 each tool along with its confidence/p-value/whatever-single-value each tool 
@@ -254,6 +255,7 @@ NC_023719.1	Firmicutes	phylum	1239
   * File `reflist.txt`: An intermediate file that holds paths to all produced 
 genome fastas (used as intermediate file to ensure smooth execution)
   * File `filtered.fa.gz`: Fasta files containing sequences > 5000 bp.
+</details>
 
 ### Per tool
 
