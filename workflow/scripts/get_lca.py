@@ -141,7 +141,7 @@ if __name__ == '__main__':
     # Read in the data
     data = pd.read_csv(args.input_fp,
                        sep='\t',
-                       index_col='contig'
+                       index_col='contig_id'
                        )
     prediction_cols = [c for c in data.columns if c.endswith('_pred')]
 
@@ -169,7 +169,7 @@ if __name__ == '__main__':
 
     lca_data = get_lca_dic(hosts, ncbi)
     with open(args.output_fp, 'w') as fout:
-        fout.write("{}\t{}\t{}\t{}\n".format('contig',
+        fout.write("{}\t{}\t{}\t{}\n".format('contig_id',
                                              'name',
                                              'rank',
                                              'lca')
