@@ -2,6 +2,9 @@
 
 A snakemake workflow that wraps various phage-host prediction tools.
 
+[![Snakemake](https://img.shields.io/badge/snakemake-≥5.30-brightgreen.svg?style=flat)](https://snakemake.readthedocs.io)
+
+
 * Uses 
 [Singularity](https://sylabs.io/) containers for execution of all tools.
 When possible (i.e. the image is not larger than a few `G`s), 
