@@ -15,13 +15,13 @@ you do not need have to get models or any other external databases.
 
 ## Current tools
 
-|Tool (source) | Publication/Preprint |
-|:------|:------|
-[HTP](https://github.com/wojciech-galan/viruses_classifier)|[Gałan W. et al., 2019](https://www.nature.com/articles/s41598-019-39847-2)
-[RaFAh](https://sourceforge.net/projects/rafah/)|[Coutinho F. H. et al., 2020](https://www.biorxiv.org/content/10.1101/2020.09.25.313155v1?rss=1)
-[vHuLK](https://github.com/LaboratorioBioinformatica/vHULK)|[Amgarten D. et al., 2020](https://www.biorxiv.org/content/10.1101/2020.12.06.413476v1)
-[VirHostMatcher-Net](https://github.com/WeiliWw/VirHostMatcher-Net)|[Wang W. et al., 2020](https://doi.org/10.1093/nargab/lqaa044)
-[WIsH](https://github.com/soedinglab/WIsH)|[Galiez G. et al., 2017](https://academic.oup.com/bioinformatics/article/33/19/3113/3964377)
+|Tool (source) | Publication/Preprint | Comments |
+|:------|:------|:------:|
+[HTP](https://github.com/wojciech-galan/viruses_classifier)|[Gałan W. et al., 2019](https://www.nature.com/articles/s41598-019-39847-2)|ok
+[RaFAh](https://sourceforge.net/projects/rafah/)|[Coutinho F. H. et al., 2020](https://www.biorxiv.org/content/10.1101/2020.09.25.313155v1?rss=1)|ok
+[vHuLK](https://github.com/LaboratorioBioinformatica/vHULK)|[Amgarten D. et al., 2020](https://www.biorxiv.org/content/10.1101/2020.12.06.413476v1)|needs fixing
+[VirHostMatcher-Net](https://github.com/WeiliWw/VirHostMatcher-Net)|[Wang W. et al., 2020](https://doi.org/10.1093/nargab/lqaa044)|ok
+[WIsH](https://github.com/soedinglab/WIsH)|[Galiez G. et al., 2017](https://academic.oup.com/bioinformatics/article/33/19/3113/3964377)|ok
 
 ## Installation
 
