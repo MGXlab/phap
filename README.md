@@ -244,7 +244,7 @@ NC_023719.1     0.9999957241187084      Bacillus        0.0012575098    Bacillus
 </details>
 
 <details>
-<summary>`lca.tsv`</summary> 
+<summary><code>lca.tsv</code></summary> 
 
 Last Common Ancestor of predictions, based on taxonomy
 
@@ -258,7 +258,7 @@ NC_023719.1	Firmicutes	phylum	1239
 </details>
 
 <details>
-<summary>`tmp` (dir)</summary>
+<summary><code>tmp</code> (dir)</summary>
 
   * Directory `genomes`: Contains one fasta file per input genome
   * File `reflist.txt`: An intermediate file that holds paths to all produced 
@@ -269,7 +269,7 @@ genome fastas (used as intermediate file to ensure smooth execution)
 ### Per tool
 
 <details>
-<summary>`htp`</summary>
+<summary><code>htp</code></summary>
 
   * File `raw.txt`: The raw output of `htp` per contig
   * File `predictions.tsv`: **Two**-column separated tsv with contig id and
@@ -277,7 +277,7 @@ probability of host being a phage.
 </details>
 
 <details>
-<summary>`rafah`</summary>
+<summary><code>rafah</code></summary>
 
   * Files prefixed with `<sample_id>_` are the rafah's raw output
   * `predictions.tsv`: A selection of the 1st (`Contig`) , 6th 
@@ -286,7 +286,7 @@ probability of host being a phage.
 </details>
 
 <details>
-<summary>`vhulk`</summary>
+<summary><code>vhulk</code></summary>
 
   * File `results.csv`: Copy of the `results/sample/tmp/genomes/results/results.csv`
   * File `predictions.tsv`: A selection of the 1st (`BIN/genome`), 10th (`final_prediction`) 
@@ -294,7 +294,7 @@ probability of host being a phage.
 </details>
 
 <details>
-<summary>`vhmnet`</summary>
+<summary><code>vhmnet</code></summary>
 
   * Directories `feature_values` and `predictions` are the raw output
   * Directory `tmp` is a temporary dir written by `VirHostMatcher-Net` for 
@@ -303,7 +303,7 @@ doing its magic.
 </details>
 
 <details>
-<summary>`wish`</summary>
+<summary><code>wish</code></summary>
 
   * Files `llikelihood.matrix` and `prediction.list` are the raw output
   * File `predictions.tsv` has contig, host taxonomy and **llikelihood** scores.
