@@ -224,11 +224,11 @@ results/A
     └── predictions.tsv
 ```
 
-###Per sample
+### Per sample
 ---
 
 <details>
-<summary>`all_predictions.tsv`</summary>
+<summary> `all_predictions.tsv` </summary>
 Contains the best prediction per contig (rows) for 
 each tool along with its confidence/p-value/whatever-single-value each tool 
 uses to evaluate its confidence in the prediction.
