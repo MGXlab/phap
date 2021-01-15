@@ -245,6 +245,7 @@ NC_023719.1     0.9999957241187084      Bacillus        0.0012575098    Bacillus
 
 <details>
 <summary>`lca.tsv`</summary> 
+
 Last Common Ancestor of predictions, based on taxonomy
 
 An example for the genomes above:
@@ -258,6 +259,7 @@ NC_023719.1	Firmicutes	phylum	1239
 
 <details>
 <summary>`tmp` (dir)</summary>
+
   * Directory `genomes`: Contains one fasta file per input genome
   * File `reflist.txt`: An intermediate file that holds paths to all produced 
 genome fastas (used as intermediate file to ensure smooth execution)
