@@ -1,6 +1,5 @@
 # phap - Phage Host Analysis Pipeline
 
-sup!
 A snakemake workflow that wraps various phage-host prediction tools.
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥5.30-brightgreen.svg?style=flat)](https://snakemake.readthedocs.io)
