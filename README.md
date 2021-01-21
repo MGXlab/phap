@@ -19,9 +19,9 @@ you do not need have to get models or any other external databases.
 |:------|:------|:------:|
 [HTP](https://github.com/wojciech-galan/viruses_classifier)|[Gałan W. et al., 2019](https://www.nature.com/articles/s41598-019-39847-2)|ok
 [RaFAh](https://sourceforge.net/projects/rafah/)|[Coutinho F. H. et al., 2020](https://www.biorxiv.org/content/10.1101/2020.09.25.313155v1?rss=1)|ok
-[vHuLK](https://github.com/LaboratorioBioinformatica/vHULK)|[Amgarten D. et al., 2020](https://www.biorxiv.org/content/10.1101/2020.12.06.413476v1)|needs fixing
+[vHuLK](https://github.com/LaboratorioBioinformatica/vHULK)|[Amgarten D. et al., 2020](https://www.biorxiv.org/content/10.1101/2020.12.06.413476v1)|ok
 [VirHostMatcher-Net](https://github.com/WeiliWw/VirHostMatcher-Net)|[Wang W. et al., 2020](https://doi.org/10.1093/nargab/lqaa044)|ok
-[WIsH](https://github.com/soedinglab/WIsH)|[Galiez G. et al., 2017](https://academic.oup.com/bioinformatics/article/33/19/3113/3964377)|ok
+[WIsH](https://github.com/soedinglab/WIsH)|[Galiez G. et al., 2017](https://academic.oup.com/bioinformatics/article/33/19/3113/3964377)|ok (unnecessary?)
 
 ## Installation
 
@@ -97,12 +97,6 @@ For each sample, **all viral contigs to be analyzed should be provided as a
 single multifasta** (can be `gz`ipped). 
 A mapping between sample ids and their corresponding fasta file is provided as
 a samplesheet (see below).
-
-### Size filtering
-
-All sequences smaller than 5000bp are filtered out.
-This is a hard requirement, mainly imposed by vHULK, and currently I 
-don't handle differential input.
 
 ### Sample sheet
 
