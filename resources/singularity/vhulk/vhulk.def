@@ -1,56 +1,50 @@
-Bootstrap: docker
+bootstrap: docker
 From: continuumio/miniconda3 
 
 %labels
-     Maintainer papanikos_182
-     Version 0.1
-	 Source https://github.com/LaboratorioBioinformatica/vHULK
-	 Preprint https://www.biorxiv.org/content/10.1101/2020.12.06.413476v1
-
-%files
-	vhulk_explicit.txt /opt/vHULK/
-	vHULK /opt
-	vhulk_resources.tar.gz /opt/vHULK
-
+    Maintainer papanikos_182
+    Version 1.0.0
+    Source https://github.com/LaboratorioBioinformatica/vHULK
+    Preprint https://www.biorxiv.org/content/10.1101/2020.12.06.413476v1
 
 %environment
-	export PATH=/opt/vHULK:$PATH
+    export PATH=/opt/vHULK:$PATH
 
 %post
-	apt update && apt upgrade -y
-	conda update -y conda	
-	
-	conda create -n vhulk --file=/opt/vHULK/vhulk_explicit.txt
+    apt update && apt upgrade -y
+    conda update -y conda
+
+    # Grab source
+    git clone https://github.com/LaboratorioBioinformatica/vHULK.git /opt/vHULK
+
+    conda env create -n vhulk -f=/opt/vHULK/vhulk.yml
 
     conda clean -ya
 
-	echo ". /opt/conda/etc/profile.d/conda.sh" >> $SINGULARITY_ENVIRONMENT
-	echo "conda activate vhulk" >> $SINGULARITY_ENVIRONMENT
-	tar -xvzf /opt/vHULK/vhulk_resources.tar.gz -C /opt/vHULK && rm /opt/vHULK/vhulk_resources.tar.gz
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> $SINGULARITY_ENVIRONMENT
+    echo "conda activate vhulk" >> $SINGULARITY_ENVIRONMENT
+
+    . /opt/conda/etc/profile.d/conda.sh
+    conda activate vhulk
+
+    cd /opt/vHULK
+
+    # Grab models
+    python download_and_set_models.py
+    
+    chmod -R g+Xr,o+Xr models/
 
 %help
-	A container for vHULK v0.1 ( https://github.com/LaboratorioBioinformatica/vHULK ).
+    A container for vHULK v1.0.0 ( https://github.com/LaboratorioBioinformatica/vHULK ).
 
-	Required source scripts. models and data are stored in /opt/vHULK .
+    Required source scripts. models and data are stored in /opt/vHULK .
 
-	The main vHULK-v0.1.py has been modified with
-	  - Portable shebang
-	  - All hardcoded paths are now hardcoded for this container
+    To run the help menu for vHULK from this container execute
 
-	To run the help menu for vHULK from this container execute
+    $ singularity exec library://papanikos_182/vhulk:0.1 python vHULK-v0.1.py --help
 
-	$ singularity exec library://papanikos_182/vhulk:0.1 python vHULK-v0.1.py --help
 
-	vHULK takes an input directory with one or more fasta files that are assumed to
-	be bins. It makes predictions based on its models for all bins separately.
-	That is, if you have assembled contigs you need to split them into separate files
-	in a directory and provide that as input.
-	It outputs a dir named `results`, stored within the input dir (nobody knows why..).
-	Its major output is a `results.csv` file with host predictions for each genome.
-	The results dir also contains hmmscan results and prokka annotations for all input 
-	genomes/bins. 
-	
-	To run an anlysis for all genomes stored in the /path/to/genomes, with 8 threads 
+    To run an anlysis for all genomes stored in the /path/to/genomes, with 8 threads 
 
-	$ singularity exec library://papanikos_182/default/vhulk:0.1 \
-	python vHULK_v0.1.py -i /path/to/genomes -t 8
+    $ singularity exec library://papanikos_182/default/vhulk:0.1 \
+    vHULK.py -i /path/to/genomes -o output_dir -t 8
