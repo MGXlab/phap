@@ -57,14 +57,18 @@ def get_taxid(name):
 
         If the given `name` is 'None` returns 'None'
     """
-    if len(name.split()) > 2:
-        name = ' '.join(name.split()[:2])
-    if name == 'None':
-        full_taxonomy = 'None'
+    name = str(name)
+    if name != '<NA>':
+        if len(name.split()) > 2:
+            name = ' '.join(name.split()[:2])
+        if name == 'None':
+            full_taxonomy = 'None'
+        else:
+            tax_dic = ncbi.get_name_translator([name])
+            taxid = tax_dic[name][0]
+            full_taxonomy = ncbi.get_lineage(taxid)
     else:
-        tax_dic = ncbi.get_name_translator([name])
-        taxid = tax_dic[name][0]
-        full_taxonomy = ncbi.get_lineage(taxid)
+        full_taxonomy = 'None'
     return full_taxonomy
 
 def translate_row(name_row):
@@ -119,12 +123,12 @@ def get_lca_dic(hosts_df, ncbi):
         # [[1,2,3,4], [1,2,3]]
         per_level = [i for i in itertools.zip_longest(*all_lineages)]
         # [[1,1], [2,2], [3,3], [4, None]]
+        lca = per_level[0]
         for i in range(len(per_level)):
-            lca = per_level[i][0] # First iteration, grab the root
-            if all_equal(per_level[i+1]): # True until index 3 (last)
-                lca = per_level[i+1][0] # 2
-            else: # When we reach the first list where all_equal fails
-                break
+            # I am assuming for taxonomy
+            # that anything beyond the lca will always yield false
+            if all_equal(per_level[i]):
+                lca = per_level[i][0]
         # Following the example LCA = 3
         name_dic = ncbi.get_taxid_translator([lca]) # Translate to name
         name = name_dic[lca] # Get the name
