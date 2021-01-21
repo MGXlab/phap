@@ -4,6 +4,7 @@ import pandas as pd
 from pathlib import Path
 from ete3 import NCBITaxa
 import itertools
+import sys
 
 
 def parse_arguments():
@@ -65,8 +66,15 @@ def get_taxid(name):
             full_taxonomy = 'None'
         else:
             tax_dic = ncbi.get_name_translator([name])
-            taxid = tax_dic[name][0]
-            full_taxonomy = ncbi.get_lineage(taxid)
+            try:
+                taxid = tax_dic[name][0]
+                full_taxonomy = ncbi.get_lineage(taxid)
+            except KeyError:
+                print(
+                "{} : Not found in taxonomy. Skipped".format(name),
+                file=sys.stderr
+                )
+                full_taxonomy='None'
     else:
         full_taxonomy = 'None'
     return full_taxonomy
