@@ -312,3 +312,18 @@ doing its magic.
 Logs capturing stdout and stderr during execution of each rule can be found in
 `workdir/logs/<sample_id>/*.log` files.
 
+### Report
+
+After successful execution of the workflow, a (basic) html report with summary
+statistics can be produced with 
+
+```
+(phap)$ snakemake --use-singularity \
+--singularity-args "-B path/to/data_dir:/data" --report phap.html
+```
+
+This will produce a `phap.html` file and a `report` directory at the root dir. 
+The `report` directory contains the two main aggregated tables from
+[the per sample results directory](#per-sample) rendered as html documents.
+These are accessible under the Results category of the main `phap.html`.
+
