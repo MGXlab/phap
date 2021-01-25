@@ -19,8 +19,9 @@ html_header = """<!DOCTYPE html>
 table_str = df.to_html(
     classes="datatable display", 
     table_id="tableone",
-    border=0
-    ) + '\n'
+    border=0,
+    justify="left"
+    ) + "\n"
 
 after_table = """\t<script class="init" type=text/javascript>
 

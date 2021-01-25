@@ -325,8 +325,7 @@ rule predictions_html:
     output:
         html = report("report/{sample}_all.html",
                 caption="report/all_table.rst",
-                category="Results",
-                subcategory="{sample}"
+                category="{sample}"
                 )
 
     params:
@@ -341,8 +340,7 @@ rule lca_html:
     output:
         html = report("report/{sample}_lca.html",
                 caption="report/lca_table.rst",
-                category="Results",
-                subcategory="{sample}"
+                category="{sample}"
                 )
 
     params:
