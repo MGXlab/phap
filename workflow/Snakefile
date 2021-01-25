@@ -4,6 +4,7 @@ from pathlib import Path
 ############
 
 configfile: "config/config.yaml"
+report: "report/workflow.rst"
 
 # This doesn't work with the sif files
 # Need to bind mount the data directory on the containers
@@ -58,7 +59,9 @@ rule all:
             "results/{sample}/tmp/reflist.txt",
             "results/{sample}/{tool}/predictions.tsv",
             "results/{sample}/all_predictions.tsv",
-            "results/{sample}/lca.tsv"
+            "results/{sample}/lca.tsv",
+            "report/{sample}_all.html",
+            "report/{sample}_lca.html",
             ],
             sample=SAMPLES, tool= TOOLS)
 
@@ -314,3 +317,36 @@ rule lca:
         "python {params.scrpt} "
         "-i {input.predictions_tsv} "
         "-o {output.lca_tsv} 2>{log}"
+
+# Report
+rule predictions_html:
+    input:
+        rules.collect_hosts.output.sample_tsv
+    output:
+        html = report("report/{sample}_all.html",
+                caption="report/all_table.rst",
+                category="Results",
+                subcategory="{sample}"
+                )
+
+    params:
+        scrpt = srcdir("scripts/tsv_to_html.py")
+    shell:
+        "python {params.scrpt} {input} {output.html}"
+
+
+rule lca_html:
+    input:
+        rules.lca.output.lca_tsv
+    output:
+        html = report("report/{sample}_lca.html",
+                caption="report/lca_table.rst",
+                category="Results",
+                subcategory="{sample}"
+                )
+
+    params:
+        scrpt = srcdir("scripts/tsv_to_html.py")
+    shell:
+        "python {params.scrpt} {input} {output.html}"
+
