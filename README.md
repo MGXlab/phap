@@ -9,7 +9,7 @@ A snakemake workflow that wraps various phage-host prediction tools.
 [Singularity](https://sylabs.io/) containers for execution of all tools.
 When possible (i.e. the image is not larger than a few `G`s), 
 tools **and** their dependencies are bundled in the same container. This means
-you do not need have to get models or any other external databases.
+you do not need to get models or any other external databases.
 * Calculates Last Common Ancestor of all tools per contig.
 
 
@@ -25,8 +25,7 @@ you do not need have to get models or any other external databases.
 
 ## Installation
 
-
-### Dependencies
+### Software dependencies
 
 To run the workflow your will need
 - `snakemake > 5.x` (developed with `5.30.1`)
@@ -37,11 +36,6 @@ in the execution environment
 - `biopython >= 1.78` (developed with `1.78`)
 - `ete3 >= 3.1.2` (developed with `3.1.2`)
 
-> The `ete3.NCBITaxa` class is used to get taxonomy information and calculate
-> the LCA of all predictions, when possible. This requires a `taxa.sqlite` 
-> to be available either in its default location
-> ( `~/.ete3toolkit/taxa.sqlite` ) or provided in the config. See more on
-> http://etetoolkit.org/docs/latest/tutorial/tutorial_ncbitaxonomy.html
 
 ### Conda environment
 
@@ -76,7 +70,64 @@ $ conda activate phap
 5.30.1
 ```
 
+### Models and data dependencies per tool
+
+* RaFaH, vHULK, HTP
+
+For these tools there is no need to pre-download and setup anything - all 
+data and software dependencies required for running them are bundled within 
+their respective singularity image.
+
+* VirHostMatcher-Net, WIsH 
+
+Databases and models need to be downloaded from the VirHostMatcher data repo
+([see here](https://github.com/WeiliWw/VirHostMatcher-Net#downloading)). 
+WIsH models for the 62,493 host genomes used in their paper are also provided
+and are used here for WIsH predictions.
+
+### NCBI Taxonomy
+
+The `ete3.NCBITaxa` class is used to get taxonomy information and calculate
+the LCA of all predictions, when possible. This requires a `taxa.sqlite` 
+to be available either in its default location
+( `$HOME/.ete3toolkit/taxa.sqlite` ) or provided in the config. See more about
+that on
+[http://etetoolkit.org/docs/latest/tutorial/tutorial_ncbitaxonomy.html]()
+
+### Singularity containers
+
+Definition files, along with documentation of how to use them to build 
+the containers are in [resources/singularity](./resources/singularity).
+
+The pre-built containers are all available through the 
+[standard singularity library](https://cloud.sylabs.io/library/papanikos_182).
+
+These are pulled at runtime (or used from cache).
+
+Alternatively, you can pull all `.sif` files from the cloud, store them locally 
+and use these in an offline mode (see below).
+
 ## Configuration
+
+The `config_template.yaml` file provided with this repo has all available 
+configurable options. Short explanations are provided as commented blocks for 
+each option.
+
+A configuration for the workflow must be available as a `config.yaml` 
+within the `config` directory. A separate `my_config.yaml` overriding the
+options in the default config.yaml can be supplied at runtime, e.g.
+```
+$ snakemake --configfile=path/to/my_config.yaml \
+<rest of snakemake options>
+```
+
+You can either copy the `config_template.yaml` and rename it to
+`config.yaml` or make your edits straight on the template and rename it to
+`config.yaml`.
+
+All fields included in the template must be specified, unless otherwise stated
+in the comment.
+
 
 ### Input data
 
@@ -125,29 +176,6 @@ You can
 - Drop the file in the workdir - **Attention**: It should be named `samples.tsv`
 - Use `snakemake`'s `--config samplesheet=/path/to/my_samples.tsv` when
 executing the wofkflow.
-
-### Models and data dependencies
-
-* RaFaH, vHULK, HTP
-
-For these tools there is no need to pre-download and setup anything - all 
-data and software dependencies required for running them are bundled within 
-their respective singularity image.
-
-* VirHostMatcher-Net, WIsH 
-
-Databases and models need to be downloaded from the VirHostMatcher data repo
-([see here](https://github.com/WeiliWw/VirHostMatcher-Net#downloading)). 
-WIsH models for the 62,493 host genomes used in their paper are also provided
-and are used here for WIsH predictions.
-
-### Singularity containers
-
-Definition files, along with documentation of how to use them to build 
-the containers are in [resources/singularity](./resources/singularity).
-
-The pre-built containers are all available through the 
-[standard singularity library](https://cloud.sylabs.io/library/papanikos_182).
 
 
 ## Usage
