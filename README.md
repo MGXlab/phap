@@ -15,14 +15,14 @@ you do not need to get models or any other external databases.
 ##### Contents
 -----
 
-* [Installation](#Installation)
-  - [Software dependencies](#Software-dependencies)
-  - [Conda environment](#Conda-environment)
-* [Data dependencies](#Data-dependencies)
+* [Installation](#installation)
+  - [Software dependencies](#software-dependencies)
+  - [Conda environment](#conda-environment)
+* [Data dependencies](#data-dependencies)
   - [NCBI Taxonomy](#ncbi-taxonomy)
-  - [Singuarity containers](#singularity-containers)
-* [Configuration](#Configuration)
-  - [Input](#Input-data)
+  - [Singularity containers](#singularity-containers)
+* [Configuration](#configuration)
+  - [Input](#input-data)
   - [Samplesheet](#sample-sheet)
 * [Usage](#usage)
 * [Output](#output)
