@@ -9,7 +9,8 @@ import sys
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-               description="Parse all_predictions.tsv to get LCA"
+        description="Parse all_predictions.tsv to get LCA",
+        formatter_class= argparse.ArgumentDefaultsHelpFormatter                
     )
     optionalArgs = parser._action_groups.pop()
     optionalArgs.title = "Optional Arguments"
@@ -38,12 +39,12 @@ def parse_arguments():
         '--db-file',
         dest='db',
         type=lambda p: Path(p).resolve(),
+        default=Path.home() / Path(".etetoolkit/taxa.sqlite"),
         required=False,
         help="Path to taxa.sqlite produced by ete3"
     )
 
     parser._action_groups.append(optionalArgs)
-
     return parser.parse_args()
 
 def get_taxid(name):
@@ -147,7 +148,6 @@ def get_lca_dic(hosts_df, ncbi):
 
 if __name__ == '__main__':
     args = parse_arguments()
-
     ncbi = NCBITaxa(dbfile=args.db)
 
     # Read in the data
