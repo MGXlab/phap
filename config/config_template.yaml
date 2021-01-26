@@ -1,36 +1,49 @@
 # Path to a 2 column, tab-separated file that holds sample ids and fasta file
 # paths to be analyzed. Header must be 'sample\tfasta'. Sample ids must be 
-# unique
-samplesheet: ""
+# unique.
+# Can be left blank, and will default to `samples.tsv`
+samplesheet:
 
+# Path to the taxa.sqlite[.traverse.pkl] produced with ete3.NCBITaxa()
+# If left blank it defaults to $HOME/.etetoolkit/taxa.sqlite
+taxa_sqlite:
+
+# Path to the data directory containing wish models, crispr dbs and
+# tables for vhmnet.
+# REQUIRED
+data_dir:
+
+# PER TOOL CONFIGURATION
+# All fields required to be defined
 vhmnet:
+    # Singularity container to use.
+    # If the image has already been pulled you can point to the local
+    # sif file
+    container: "library://papanikos_182/default/vhmnet:0.1"
     # Assign enough threads to vhmnet so it runs on its own.
-    # It might get killed otherwise, if it runs in parallel with another
-    # tools. This value depends on the -j (or --cores) when invoking
-    # snakemake
+    # It might get killed otherwise, if it runs in parallel with another tool.
+    # This value depends on the -j (or --cores) when invoking snakemake.
     threads: 12
-    # Path to the data directory containing wish models, crispr dbs and
-    # tables.
-    data_dir: ""
-    # Set this to true if to enable the short-contig flag of vhmnet
-    short_contig: true
+    # Set this to true to enable the short-contig flag of vhmnet
+    short_contig: false
 
 vhulk:
-    # Threads for vhulk. Defaults to 8
-    threads:
+    # You can use a local images file, if pulled manually.
+    container: "library://papanikos_182/default/vhulk:1.0.0"
+    threads: 8
 
 rafah:
-    # Threads for rafah. Defaults to 8
-    threads:
+    container: "library://papanikos_182/default/rafah:0.1"
+    threads: 8
 
 wish:
-    # threads for wish. Defaults to 8
-    threads: 
+    container: "library://papanikos_182/default/wish:1.0"
+    threads: 8
 
 htp:
-    # threads for htp. Defaults to 8
-    threads:
+    container: "library://papanikos_182/default/htp:0.2"
+    threads: 8
     # set **ONE** htp classifier to run with htp.
-    # Available classifiers: svc, knn, qda, lr
-    # Defaults to svc
-    classifier: 
+    # Available classifiers: svc, qda, lr
+    # DO NOT USE knn - it segfaults
+    classifier: svc 
