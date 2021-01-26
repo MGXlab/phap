@@ -10,7 +10,15 @@ report: "report/workflow.rst"
 # Need to bind mount the data directory on the containers
 # with --singularity-args "-B path/to/data_dir:/data"
 # It is required to get taxonomy for wish though
-DATA_DIR = Path(config.get("vhmnet").get("data_dir"))
+DATA_DIR = Path(config.get("data_dir"))
+
+# Set the taxa.sqlite db path
+# Used in rule lca
+if config.get('taxa_sqlite'):
+    TAXA_SQLITE = Path(config.get('taxa_sqlite'))
+else:
+    TAXA_SQLITE= Path.home() / Path(".etetoolkit/taxa.sqlite")
+
 
 def parse_samplesheet(samples_tsv):
     samples_dic = {}
@@ -30,8 +38,8 @@ samples_dic = parse_samplesheet(config.get('samplesheet', 'samples.tsv'))
 
 SAMPLES = list(samples_dic.keys())
 TOOLS = [
-        "vhulk", 
-        "rafah", 
+        "vhulk",
+        "rafah",
         "vhmnet",
         "wish",
         "htp"
@@ -81,14 +89,15 @@ rule all:
 #        min_size = 5000
 #    shell:
 #        "seqkit seq -g -j {threads} -m {params.min_size} "
-#        "{input.multifasta_fp} | gzip -c >{output.filtered_fasta} 2>{log}" 
+#        "{input.multifasta_fp} | gzip -c >{output.filtered_fasta} 2>{log}"
 
 rule split_multifasta:
     input:
         get_sample_fasta
     output:
         reflist = "results/{sample}/tmp/reflist.txt"
-    log: "logs/{sample}/split_multifasta.log"
+    log:
+        "logs/{sample}/split_multifasta.log"
     params:
         genomes_dir = "results/{sample}/tmp/genomes",
         scrpt = srcdir("scripts/split_multifasta.py")
@@ -108,11 +117,12 @@ rule run_vhulk:
     params:
         fasta_dir = "results/{sample}/tmp/genomes",
         output_dir = "results/{sample}/vhulk"
-    log: 
+    log:
         "logs/{sample}/vhulk.log"
     container:
-        "library://papanikos_182/default/vhulk:1.0.0"
-    threads: 8
+        config['vhulk'].get('container')
+    threads:
+        config['vhulk'].get('threads', 8)
     shell:
         "vHULK.py -i {params.fasta_dir} "
         "-o {params.output_dir} "
@@ -123,7 +133,7 @@ rule process_vhulk:
         vhulk_csv = rules.run_vhulk.output.results_csv
     output:
         vhulk_tsv = "results/{sample}/vhulk/predictions.tsv"
-    log: 
+    log:
         "logs/{sample}/process_vhulk.log"
     shell:
         "tail -n+2 {input.vhulk_csv} | cut -d ',' -f 1,10,11 "
@@ -140,9 +150,10 @@ rule run_rafah:
         fasta_dir = "results/{sample}/tmp/genomes"
     log:
         "logs/{sample}/rafah.log"
-    container: 
-        "library://papanikos_182/default/rafah:0.1"
-    threads: 8
+    container:
+        config['rafah'].get('container')
+    threads:
+        config['rafah'].get('threads', 8)
     shell:
         "RaFAH_v0.1.pl --genomes_dir {params.fasta_dir}/ "
         "--extension fasta --threads {threads} "
@@ -173,16 +184,19 @@ rule run_vhmnet:
         data_dir = "/data",
         tmp_dir = "results/{sample}/vhmnet/tmp",
         output_dir = "results/{sample}/vhmnet",
-        fasta_dir = "results/{sample}/tmp/genomes"
-    threads: 12
+        fasta_dir = "results/{sample}/tmp/genomes",
+        short_contig = "--short-contig"
+            if config['vhmnet']['short_contig'] else ''
+    threads:
+        config['vhmnet'].get('threads', 12)
     container:
-        "library://papanikos_182/default/vhmnet:0.1"
+        config['vhmnet'].get('container')
     log:
         "logs/{sample}/vhmnet.log"
     shell:
         "VirHostMatcher-Net.py -q {params.fasta_dir} "
         "-t {threads} "
-        "--short-contig "
+        "{params.short_contig} "
         "-i {params.tmp_dir} "
         "-d {params.data_dir} "
         "-q {params.fasta_dir} "
@@ -199,7 +213,7 @@ rule process_vhmnet:
     shell:
         """
         for f in $(find -wholename "{params.predictions_dir}/*.csv" -type f);
-        do 
+        do
             contig_id=$(basename ${{f}} | sed -e 's/_prediction.csv//')
             host_score=$(tail -n1 ${{f}} | cut -f8,10 -d',' | tr ',' '\t')
             echo -e "$contig_id\t$host_score" >> {output.vhmnet_tsv}.tmp;
@@ -216,9 +230,10 @@ rule run_wish:
         ll_mat = "results/{sample}/wish/llikelihood.matrix"
     log:
         "logs/{sample}/wish.log"
-    threads: 8
+    threads:
+        config['wish'].get('threads', 8)
     container:
-        "library://papanikos_182/default/wish:1.0"
+        config['wish'].get('container')
     params:
         # snakemake --singularity-args binds the whole data dir to /data
         # see run_vhmnet rule
@@ -256,9 +271,11 @@ rule run_htp:
     log:
         stderr = "logs/{sample}/htp.stderr"
     params:
-        fasta_dir = "./results/{sample}/tmp/genomes"
+        fasta_dir = "./results/{sample}/tmp/genomes",
+        classifier = config['htp'].get('classifier')
     container:
-        "library://papanikos_182/default/htp:1.0.2"
+        config['htp'].get('container',
+                "library://papanikos_182/default/htp:1.0.2")
     shell:
         """
         printf "contig\traw_pred\n" > {output.htp_raw}
@@ -266,7 +283,7 @@ rule run_htp:
         do
             contig_id=$(basename ${{f}} | sed -e 's/\.fasta//' )
             pred=$(viruses_classifier \
-                    --classifier svc \
+                    --classifier {params.classifier} \
                     --nucleic_acid dna \
                     -p ${{f}} 2>{log.stderr})
             echo -e $contig_id\t$pred >> {output.htp_raw}
@@ -310,11 +327,13 @@ rule lca:
     output:
         lca_tsv = "results/{sample}/lca.tsv"
     params:
-        scrpt = srcdir("scripts/get_lca.py")
+        scrpt = srcdir("scripts/get_lca.py"),
+        taxa_sqlite = TAXA_SQLITE
     log:
         "logs/{sample}/get_lca.log"
     shell:
         "python {params.scrpt} "
+        "-d {params.taxa_sqlite} "
         "-i {input.predictions_tsv} "
         "-o {output.lca_tsv} 2>{log}"
 
