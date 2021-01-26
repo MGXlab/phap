@@ -12,6 +12,23 @@ tools **and** their dependencies are bundled in the same container. This means
 you do not need to get models or any other external databases.
 * Calculates Last Common Ancestor of all tools per contig.
 
+##### Contents
+-----
+
+* [Installation](#Installation)
+  - [Software dependencies](#Software-dependencies)
+  - [Conda environment](#Conda-environment)
+* [Data dependencies](#Data-dependencies)
+  - [NCBI Taxonomy](#ncbi-taxonomy)
+  - [Singuarity containers](#singularity-containers)
+* [Configuration](#Configuration)
+  - [Input](#Input-data)
+  - [Samplesheet](#sample-sheet)
+* [Usage](#usage)
+* [Output](#output)
+* [Logs](#logs)
+* [Report](#report)
+
 
 ## Current tools
 
