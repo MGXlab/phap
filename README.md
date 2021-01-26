@@ -70,7 +70,7 @@ $ conda activate phap
 5.30.1
 ```
 
-### Models and data dependencies per tool
+## Data dependencies
 
 * RaFaH, vHULK, HTP
 
@@ -335,22 +335,24 @@ doing its magic.
 </details>
 
 
-### Logs
+## Logs
 
 Logs capturing stdout and stderr during execution of each rule can be found in
 `workdir/logs/<sample_id>/*.log` files.
 
-### Report
+## Report
 
-After successful execution of the workflow, a (basic) html report with summary
-statistics can be produced with 
+**After successful execution** of the workflow, a (basic) html report with 
+summary statistics can be produced with 
 
 ```
 (phap)$ snakemake --use-singularity \
 --singularity-args "-B path/to/data_dir:/data" --report phap.html
 ```
 
-This will produce a `phap.html` file and a `report` directory at the root dir. 
+This will produce a `phap.html` file, making use of the information in the
+`report` directory. 
+
 The `report` directory contains the two main aggregated tables from
 [the per sample results directory](#per-sample) rendered as html documents.
 These are accessible under the Results category of the main `phap.html`.
