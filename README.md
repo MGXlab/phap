@@ -195,14 +195,14 @@ Basic:
 ```
 
 where `/path/to/database/data` is the directory containing tables, 
-WIsH models and CRISPR blasts databases.
+WIsH models and CRISPR blast [databases](#data-dependencies).
 
 * The `-j` flag controls the number of jobs (cores) to be run in parallel.
-Change this according yo your setup
-* The `-p` flag prints commands that are scheduled for executing. You can 
-* remove this
-* Binding the data dir with the `--signularity-args` is required (at least 
-in my tests). You **must also** provide it as a value in the config.yaml.
+Change this according to your setup.
+* The `-p` flag prints commands that are scheduled for execution.
+* Binding the data dir with the `--signularity-args` is required. 
+You **must also provide this path as a value** for the `data_dir` option
+in the `config.yaml`.
 
 
 ## Output
