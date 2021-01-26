@@ -1,0 +1,36 @@
+# Path to a 2 column, tab-separated file that holds sample ids and fasta file
+# paths to be analyzed. Header must be 'sample\tfasta'. Sample ids must be 
+# unique
+samplesheet: ""
+
+vhmnet:
+    # Assign enough threads to vhmnet so it runs on its own.
+    # It might get killed otherwise, if it runs in parallel with another
+    # tools. This value depends on the -j (or --cores) when invoking
+    # snakemake
+    threads: 12
+    # Path to the data directory containing wish models, crispr dbs and
+    # tables.
+    data_dir: ""
+    # Set this to true if to enable the short-contig flag of vhmnet
+    short_contig: true
+
+vhulk:
+    # Threads for vhulk. Defaults to 8
+    threads:
+
+rafah:
+    # Threads for rafah. Defaults to 8
+    threads:
+
+wish:
+    # threads for wish. Defaults to 8
+    threads: 
+
+htp:
+    # threads for htp. Defaults to 8
+    threads:
+    # set **ONE** htp classifier to run with htp.
+    # Available classifiers: svc, knn, qda, lr
+    # Defaults to svc
+    classifier: 

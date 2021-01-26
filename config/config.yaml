@@ -1,4 +1,0 @@
-samplesheet: "/home/nikos/Projects/phap/samples.csv"
-
-vhmnet:
-  data_dir: "/home/nikos/nikos2/databases/vhm_net/data"
