@@ -41,7 +41,7 @@ wish:
     threads: 8
 
 htp:
-    container: "library://papanikos_182/default/htp:0.2"
+    container: "library://papanikos_182/default/htp:1.0.2"
     threads: 8
     # set **ONE** htp classifier to run with htp.
     # Available classifiers: svc, qda, lr
