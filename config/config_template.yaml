@@ -1,7 +1,7 @@
 # Path to a 2 column, tab-separated file that holds sample ids and fasta file
 # paths to be analyzed. Header must be 'sample\tfasta'. Sample ids must be 
 # unique.
-# Can be left blank, and will default to `samples.tsv`
+# REQUIRED
 samplesheet:
 
 # Path to the taxa.sqlite[.traverse.pkl] produced with ete3.NCBITaxa()
