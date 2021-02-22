@@ -95,12 +95,26 @@ For these tools there is no need to pre-download and setup anything - all
 data and software dependencies required for running them are bundled within 
 their respective singularity image.
 
-* VirHostMatcher-Net, WIsH 
+* VirHostMatcher-Net
 
 Databases and models need to be downloaded from the VirHostMatcher data repo
-([see here](https://github.com/WeiliWw/VirHostMatcher-Net#downloading)). 
-WIsH models for the 62,493 host genomes used in their paper are also provided
-and are used here for WIsH predictions.
+([see here](https://github.com/WeiliWw/VirHostMatcher-Net#downloading)). The 
+[both_models](https://github.com/WeiliWw/VirHostMatcher-Net#complete-genome-mode-and-short-viral-contig-mode)
+option was used during development.
+
+The unpacked data must be used with the `data_dir` option within the 
+[config.yaml](#configuration).
+
+* WIsH
+
+VirHostMatcher-Net authors also provide models for WIsH predictions.
+The unpacked archive from above comes with a `host_wish_model` directory, which
+contains 62,493 WIsH models for all genomes used in the
+VirHostMatcher-Net paper. These are used here.
+
+The location of the unpacked `data` archive - and **not** the path to 
+`data/host_wish_model` - must be used with the `data_dir`
+option within the [config.yaml](#configuration).
 
 ### NCBI Taxonomy
 
@@ -133,6 +147,7 @@ each option.
 A configuration for the workflow must be available as a `config.yaml` 
 within the `config` directory. A separate `my_config.yaml` overriding the
 options in the default config.yaml can be supplied at runtime, e.g.
+
 ```
 $ snakemake --configfile=path/to/my_config.yaml \
 <rest of snakemake options>
