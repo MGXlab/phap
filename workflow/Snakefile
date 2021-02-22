@@ -34,7 +34,7 @@ def parse_samplesheet(samples_tsv):
                 samples_dic[fields[0]] = fields[1]
     return samples_dic
 
-samples_dic = parse_samplesheet(config.get('samplesheet', 'samples.tsv'))
+samples_dic = parse_samplesheet(config.get('samplesheet'))
 
 SAMPLES = list(samples_dic.keys())
 TOOLS = [
