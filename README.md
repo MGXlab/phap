@@ -205,7 +205,6 @@ s02	/path/to/another.fna.gz
 
 You can
 - Fill in the location of the samplesheet within the `config/config.yaml`.
-- Drop the file in the workdir - **Attention**: It should be named `samples.tsv`
 - Use `snakemake`'s `--config samplesheet=/path/to/my_samples.tsv` when
 executing the wofkflow.
 
