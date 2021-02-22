@@ -367,3 +367,21 @@ rule lca_html:
     shell:
         "python {params.scrpt} {input} {output.html}"
 
+
+onsuccess:
+        print(2*'\n' + '\t' + 76*'#')
+        print('\n\tWorkflow finished successfully!\n')
+        print('\t' + 76*'#')
+
+        print('\t## CLEANUP ##\n')
+        print('\tRemoving all genomes from tmp directories...\n')
+        shell('rm -rf results/*/tmp/genomes/*')
+        print('\t' + 76*'#')
+
+        print('\t## REPORT ## \n')
+        print('\tA report with summary statistics for the execution of the ')
+        print('\tpipeline and aggregated results per sample can be created '\
+            'with\n')
+        print('\t\t$ snakemake -j2 --report phap.html\n')
+        print('\tYou can view the resulting phap.html report with any ')
+        print('\tbrowser.\n')
