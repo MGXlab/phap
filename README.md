@@ -72,7 +72,7 @@ used during development.
 To get a working environment
 ```
 # Clone this repo and get in there
-$ git clone https://git.science.uu.nl/papanikos/phap.git
+$ git clone https://github.com/MGXlab/phap
 $ cd phap
 
 # Note the long notation --file flag; -f will not work.
