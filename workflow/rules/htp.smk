@@ -32,6 +32,8 @@ rule process_htp:
         predictions_tsv = "results/{sample}/htp/predictions.tsv"
     params:
         ob = "{"
+    conda:
+        "envs/phap_utils.yaml"
     shell:
         """
         tail -n +2 results/{wildcards.sample}/htp/raw.txt | cut -f1 -d','| \

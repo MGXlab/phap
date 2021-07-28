@@ -26,6 +26,8 @@ rule process_rafah:
         rafah_tsv = "results/{sample}/rafah/predictions.tsv"
     log:
         "logs/{sample}/process_rafah.log"
+    conda:
+        "envs/phap_utils.yaml"
     shell:
         "tail -n+2 {input.seq_info} | cut -f1,6,7 | sort -k1 "
         "> {output.rafah_tsv}"

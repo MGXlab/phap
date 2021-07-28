@@ -61,6 +61,8 @@ rule split_multifasta:
     params:
         genomes_dir = "results/{sample}/tmp/genomes",
         scrpt = srcdir("scripts/split_multifasta.py")
+    conda:
+        "envs/phap_utils.yaml"
     shell:
         "mkdir -p {params.genomes_dir} && "
         "python {params.scrpt} "
@@ -78,6 +80,8 @@ rule collect_hosts:
         scrpt = srcdir("scripts/cat_predictions.py")
     log:
         "logs/{sample}/cat_predictions.log"
+    conda:
+        "envs/phap_utils.yaml"
     shell:
         "python {params.scrpt} "
         "-i {input} -o {output.sample_tsv} "
@@ -94,6 +98,8 @@ rule lca:
         taxa_sqlite = TAXA_SQLITE
     log:
         "logs/{sample}/get_lca.log"
+    conda:
+        "envs/phap_utils.yaml"
     shell:
         "python {params.scrpt} "
         "-d {params.taxa_sqlite} "
@@ -112,6 +118,8 @@ rule predictions_html:
 
     params:
         scrpt = srcdir("scripts/tsv_to_html.py")
+    conda:
+        "envs/phap_utils.yaml"
     shell:
         "python {params.scrpt} {input} {output.html}"
 
@@ -127,6 +135,8 @@ rule lca_html:
 
     params:
         scrpt = srcdir("scripts/tsv_to_html.py")
+    conda:
+        "envs/phap_utils.yaml"
     shell:
         "python {params.scrpt} {input} {output.html}"
 

@@ -33,6 +33,8 @@ rule process_wish:
         scrpt = srcdir("scripts/wish_add_taxonomy.py")
     log:
         "logs/{sample}/process_wish.log"
+    conda:
+        "envs/phap_utils.yaml"
     shell:
         "python {params.scrpt} "
         "-i {input.prediction_list} -t {params.hostTaxa_pkl} "
