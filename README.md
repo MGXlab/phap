@@ -4,5 +4,5 @@
 
 A snakemake workflow that wraps various phage-host prediction tools.
 
-Documentation: On [read the docs](https://phap.readthedocs.io/en/latest)
+Documentation on [readthedocs](https://phap.readthedocs.io/en/latest).
 
