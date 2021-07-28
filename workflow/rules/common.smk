@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 def parse_samplesheet(samples_tsv):
     samples_dic = {}
     with open(samples_tsv, 'r') as fin:
@@ -60,7 +61,7 @@ rule split_multifasta:
         "logs/{sample}/split_multifasta.log"
     params:
         genomes_dir = "results/{sample}/tmp/genomes",
-        scrpt = srcdir("scripts/split_multifasta.py")
+        scrpt = srcdir("../scripts/split_multifasta.py")
     conda:
         "../envs/phap_utils.yaml"
     shell:
@@ -77,7 +78,7 @@ rule collect_hosts:
     output:
         sample_tsv = "results/{sample}/all_predictions.tsv"
     params:
-        scrpt = srcdir("scripts/cat_predictions.py")
+        scrpt = srcdir("../scripts/cat_predictions.py")
     log:
         "logs/{sample}/cat_predictions.log"
     conda:
@@ -94,7 +95,7 @@ rule lca:
     output:
         lca_tsv = "results/{sample}/lca.tsv"
     params:
-        scrpt = srcdir("scripts/get_lca.py"),
+        scrpt = srcdir("../scripts/get_lca.py"),
         taxa_sqlite = TAXA_SQLITE
     log:
         "logs/{sample}/get_lca.log"
@@ -117,7 +118,7 @@ rule predictions_html:
                 )
 
     params:
-        scrpt = srcdir("scripts/tsv_to_html.py")
+        scrpt = srcdir("../scripts/tsv_to_html.py")
     log: 
         "logs/{sample}/predictions_html.log"
     conda:
@@ -136,7 +137,7 @@ rule lca_html:
                 )
 
     params:
-        scrpt = srcdir("scripts/tsv_to_html.py")
+        scrpt = srcdir("../scripts/tsv_to_html.py")
     log:
         "logs/{sample}/lca_html.log"
     conda:

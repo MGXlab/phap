@@ -30,7 +30,7 @@ rule process_wish:
         predictions_tsv = "results/{sample}/wish/predictions.tsv"
     params:
         hostTaxa_pkl = DATA_DIR.joinpath("tables/hostTaxa.pkl"),
-        scrpt = srcdir("scripts/wish_add_taxonomy.py")
+        scrpt = srcdir("../scripts/wish_add_taxonomy.py")
     log:
         "logs/{sample}/process_wish.log"
     conda:
