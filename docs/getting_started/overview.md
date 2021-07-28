@@ -2,13 +2,20 @@
 
 ## Features
 
-* Uses [Singularity](https://sylabs.io/) containers for execution of all tools.
+* Uses [Singularity](https://sylabs.io/) containers for the execution of all 
+tools.
 
-When possible (i.e. the image is not larger than a few `G`s), 
-tools **and** their dependencies are bundled in the same container. This means
-you do not need to get models or any other external databases.
+When possible (i.e. the image is not larger than a few `G`s), tools **and** 
+their dependencies are bundled in the same container. This means
+you do not need to get models or any other external databases, unless 
+otherwise specified.
 
-* Calculates the Last Common Ancestor of all tools per contig.
+* Intermediate processing steps are handled by [Conda](https://conda.io/en/latest/) 
+environments, to ensure smooth and reproducible execution.
+
+
+* Outputs the Last Common Ancestor of all tools, per contig, based on the 
+predicted taxonomy.
 
 ## Tools
 

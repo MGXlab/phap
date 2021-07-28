@@ -11,27 +11,22 @@ Software dependencies
 ---------------------
 To run the workflow your will need
 
-- ``snakemake > 5.x`` (developed with ``5.30.1``)
-- ``singularity >= 3.6`` (developed with ``3.6.3``)
-
-The following python packages are also required to be installed and available 
-in the execution environment
-
-- ``biopython >= 1.78`` (developed with ``1.78``)
-- ``ete3 >= 3.1.2`` (developed with ``3.1.2``)
+- ``snakemake > 6.x``
+- ``singularity >= 3.6`` 
+- ``mamba >= 0.15.2``
 
 .. _installation-conda:
 
 Conda environment
 -----------------
 It is recommended to use a conda_ environment.
-The file ``environment.txt`` can be used to recreate the complete environment 
+The file ``conda-linux-54.lock`` can be used to recreate the complete environment 
 used during development.
 
 .. note::
 
-   The provided ``environment.txt`` contains an explicit list of all packages,
-   produced with ``conda list -n phap --explicit > environment.txt``.
+   The provided ``lock`` file contains an explicit list of all packages,
+   produced with ``conda-lock lock -f environment.yaml -p linux-64``.
    This ensures all packages are exactly the same versions/builds, so we 
    minimize the risk of running into dependencies issues
 
@@ -43,7 +38,7 @@ To get a working environment:
     $ cd phap
 
     # Note the long notation --file flag; -f will not work.
-    $ conda create -n phap --file=environment.txt
+    $ conda create -n phap --file=conda-linux-64.lock
 
     # Activate it - use the name you gave above, if it is different
     $ conda activate phap
@@ -51,7 +46,7 @@ To get a working environment:
     # The (phap) prefix shows we have activated it
     # Check the snakemake version
     (phap) $ snakemake --version
-    5.30.1
+    6.6.1
 
 .. _installation-data:
 
@@ -106,5 +101,5 @@ The pre-built containers are all available through the
 `standard singularity library <https://cloud.sylabs.io/library/papanikos_182>`_.
 These are pulled at runtime (or used from cache).
 Alternatively, you can pull all ``.sif`` files from the cloud, store them locally.
-You can then point the path to these image files in the ``config_yaml``.
+You can then point the path to these image files in the ``config.yaml``.
 
