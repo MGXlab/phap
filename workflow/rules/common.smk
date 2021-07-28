@@ -118,10 +118,12 @@ rule predictions_html:
 
     params:
         scrpt = srcdir("scripts/tsv_to_html.py")
+    log: 
+        "logs/{sample}/predictions_html.log"
     conda:
         "../envs/phap_utils.yaml"
     shell:
-        "python {params.scrpt} {input} {output.html}"
+        "python {params.scrpt} {input} {output.html} 2>{log}"
 
 
 rule lca_html:
@@ -135,10 +137,12 @@ rule lca_html:
 
     params:
         scrpt = srcdir("scripts/tsv_to_html.py")
+    log:
+        "logs/{sample}/lca_html.log"
     conda:
         "../envs/phap_utils.yaml"
     shell:
-        "python {params.scrpt} {input} {output.html}"
+        "python {params.scrpt} {input} {output.html} 2>{log}"
 
 
 onsuccess:

@@ -35,6 +35,8 @@ rule process_vhmnet:
         vhmnet_tsv = "results/{sample}/vhmnet/predictions.tsv"
     params:
         predictions_dir = "./results/{sample}/vhmnet/predictions"
+    log:
+        "logs/{sample}/process_vhmnet.log"
     conda:
         "../envs/phap_utils.yaml"
     shell:
@@ -44,8 +46,8 @@ rule process_vhmnet:
             contig_id=$(basename ${{f}} | sed -e 's/_prediction.csv//')
             host_score=$(tail -n1 ${{f}} | cut -f8,10 -d',' | tr ',' '\t')
             echo -e "$contig_id\t$host_score" >> {output.vhmnet_tsv}.tmp;
-        done
-        sort -k1 {output.vhmnet_tsv}.tmp > {output.vhmnet_tsv}
+        done 2>{log}
+        sort -k1 {output.vhmnet_tsv}.tmp > {output.vhmnet_tsv} 2>>{log}
         rm -f {output.vhmnet_tsv}.tmp
         """
 

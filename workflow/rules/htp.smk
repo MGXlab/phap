@@ -32,12 +32,14 @@ rule process_htp:
         predictions_tsv = "results/{sample}/htp/predictions.tsv"
     params:
         ob = "{"
+    log:
+        "logs/{sample}/process_htp.log"
     conda:
         "../envs/phap_utils.yaml"
     shell:
         """
         tail -n +2 results/{wildcards.sample}/htp/raw.txt | cut -f1 -d','| \
                 sed -r "s/ \{params.ob}'phage'\: /\t/" | sort -k1 \
-                >{output.predictions_tsv}
+                >{output.predictions_tsv} 2>{log}
         """
 
