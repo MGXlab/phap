@@ -36,7 +36,7 @@ rule process_vhmnet:
     params:
         predictions_dir = "./results/{sample}/vhmnet/predictions"
     conda:
-        "envs/phap_utils.yaml"
+        "../envs/phap_utils.yaml"
     shell:
         """
         for f in $(find -wholename "{params.predictions_dir}/*.csv" -type f);

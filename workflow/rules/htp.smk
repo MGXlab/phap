@@ -33,7 +33,7 @@ rule process_htp:
     params:
         ob = "{"
     conda:
-        "envs/phap_utils.yaml"
+        "../envs/phap_utils.yaml"
     shell:
         """
         tail -n +2 results/{wildcards.sample}/htp/raw.txt | cut -f1 -d','| \

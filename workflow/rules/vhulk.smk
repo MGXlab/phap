@@ -26,7 +26,7 @@ rule process_vhulk:
     log:
         "logs/{sample}/process_vhulk.log"
     conda:
-        "envs/phap_utils.yaml"
+        "../envs/phap_utils.yaml"
     shell:
         "tail -n+2 {input.vhulk_csv} | cut -d ',' -f 1,10,11 "
         "| tr ',' '\t' | sort -k1 1>{output.vhulk_tsv} 2>{log}"

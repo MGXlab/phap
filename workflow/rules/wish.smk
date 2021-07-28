@@ -34,7 +34,7 @@ rule process_wish:
     log:
         "logs/{sample}/process_wish.log"
     conda:
-        "envs/phap_utils.yaml"
+        "../envs/phap_utils.yaml"
     shell:
         "python {params.scrpt} "
         "-i {input.prediction_list} -t {params.hostTaxa_pkl} "
