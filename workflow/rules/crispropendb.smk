@@ -40,7 +40,7 @@ rule process_crispropendb:
             for line in lines[1:]: # discard header
                 # no hits were found
                 if "Sorry!" in line[1]:
-                    fout.write(f"{line[0]}\tNone\tNone\n")
+                    fout.write(f"{line[0]}\tNone\t0\n")
                 # hits were found
                 else:
                     fields   = line[1].replace("'", "").split(", ")

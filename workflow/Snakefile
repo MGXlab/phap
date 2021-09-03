@@ -12,7 +12,7 @@ include: "rules/crispropendb.smk"
 rule all:
     input:
         expand([
-            "results/{sample}/tmp/reflist.txt",
+            #"results/{sample}/tmp/reflist.txt",
             "results/{sample}/{tool}/predictions.tsv",
             "results/{sample}/all_predictions.tsv",
             "results/{sample}/lca.tsv",
