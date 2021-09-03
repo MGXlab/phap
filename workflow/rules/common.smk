@@ -48,7 +48,8 @@ TOOLS = [
         "rafah",
         "vhmnet",
         "wish",
-        "htp"
+        "htp",
+        "crispropendb"
         ]
 
 
@@ -119,7 +120,7 @@ rule predictions_html:
 
     params:
         scrpt = srcdir("../scripts/tsv_to_html.py")
-    log: 
+    log:
         "logs/{sample}/predictions_html.log"
     conda:
         "../envs/phap_utils.yaml"
