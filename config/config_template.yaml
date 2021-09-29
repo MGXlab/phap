@@ -1,5 +1,5 @@
 # Path to a 2 column, tab-separated file that holds sample ids and fasta file
-# paths to be analyzed. Header must be 'sample\tfasta'. Sample ids must be 
+# paths to be analyzed. Header must be 'sample\tfasta'. Sample ids must be
 # unique.
 # REQUIRED
 samplesheet:
@@ -46,4 +46,8 @@ htp:
     # set **ONE** htp classifier to run with htp.
     # Available classifiers: svc, qda, lr
     # DO NOT USE knn - it segfaults
-    classifier: svc 
+    classifier: svc
+
+crispropendb:
+    container: "library://dcarrillo/default/crispropendb:0.1"
+    threads: 8

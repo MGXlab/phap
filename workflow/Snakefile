@@ -7,11 +7,12 @@ include: "rules/vhulk.smk"
 include: "rules/vhmnet.smk"
 include: "rules/htp.smk"
 include: "rules/wish.smk"
+include: "rules/crispropendb.smk"
 
 rule all:
     input:
         expand([
-            "results/{sample}/tmp/reflist.txt",
+            #"results/{sample}/tmp/reflist.txt",
             "results/{sample}/{tool}/predictions.tsv",
             "results/{sample}/all_predictions.tsv",
             "results/{sample}/lca.tsv",
@@ -19,4 +20,3 @@ rule all:
             "report/{sample}_lca.html",
             ],
             sample=SAMPLES, tool= TOOLS)
-
