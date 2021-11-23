@@ -7,7 +7,7 @@ A dry-run (_always a good idea before each execution_)
 --use-conda \
 --conda-frontend mamba \
 --use-singularity \
---singularity-args "-B /path/to/databases/data:/data" 
+--singularity-args "-B path/to/vhmnet/data:/data -B path/to/crisporopendb/data:/data2" 
 ```
 
 ## Basic
@@ -19,11 +19,11 @@ A dry-run (_always a good idea before each execution_)
 --use-conda \
 --conda-frontend mamba \
 --use-singularity -j16 \
---singularity-args "-B /path/to/databases/data:/data"
+--singularity-args "-B path/to/vhmnet/data:/data -B path/to/crisporopendb/data:/data2" 
 ```
 
 where `/path/to/database/data` is the directory containing tables, 
-WIsH models and CRISPR blast [databases](#data-dependencies).
+WIsH models and CRISPR blast [databases for vhmnet](#data-dependencies).
 
 * The `-j` flag controls the number of jobs (cores) to be run in parallel.
 Change this according to your setup.

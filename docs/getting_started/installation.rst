@@ -80,6 +80,46 @@ VirHostMatcher-Net paper. These are used here.
     ``data/host_wish_model`` - must be used with the ``data_dir``
     option within the ``config.yaml``.
 
+* CrispropenDB
+
+Data are provided by the authors on this 
+`link <http://crispr.genome.ulaval.ca/dash/PhageHostIdentifier_DBfiles.zip>_`.
+Once you download the archive unzip it and build the required BLAST db files.
+
+To make sure that the BLAST db is compatible with the blast version wrapped 
+in the singularity image that is used here you can ``cd`` in the unzipped 
+directory from above and run
+
+.. code-block:: bash
+    
+    $ singularity run library://dcarrillo/default/crispropendb:0.1 \
+            makeblastdb -in SpacersDB.fasta \
+            -out SpacersDB \
+            -dbtype nucl
+
+The resulting database files can be moved with the rest of the unzipped files. 
+You should have a final data directory with the following contents
+
+.. code-block:: bash:
+    
+   $ tree data
+    data
+    ├── CrisprOpenDB.sqlite
+    ├── SpacersDB.00.nhr
+    ├── SpacersDB.00.nin
+    ├── SpacersDB.00.nsq
+    ├── SpacersDB.01.nhr
+    ├── SpacersDB.01.nin
+    ├── SpacersDB.01.nsq
+    ├── SpacersDB.nal
+    ├── SpacersDB.ndb
+    ├── SpacersDB.not
+    ├── SpacersDB.ntf
+    └── SpacersDB.nto
+
+The location of this ``data`` directory must be supplied separately as a mount 
+point for singularity ``data`` if you want to run ``CrisprOpenDB``.
+
 .. _installation-ncbi:
 
 NCBI Taxonomy
