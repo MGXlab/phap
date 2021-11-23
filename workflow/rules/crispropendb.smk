@@ -39,7 +39,7 @@ rule process_crispropendb:
         with open(output.predictions_tsv, "w") as fout:
             for line in lines[1:]: # discard header
                 # no hits were found
-                if "Sorry!" in line[1]:
+                if "Sorry" in line[1]:
                     fout.write(f"{line[0]}\tNone\t0\n")
                 # hits were found
                 else:
