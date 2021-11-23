@@ -43,14 +43,19 @@ else:
 samples_dic = parse_samplesheet(config.get('samplesheet'))
 
 SAMPLES = list(samples_dic.keys())
-TOOLS = [
-        "vhulk",
-        "rafah",
-        "vhmnet",
-        "wish",
-        "htp",
-        #"crispropendb"
-        ]
+
+if "tools" in config:
+    if config["tools"] == "all":
+        TOOLS = [
+            "vhulk",
+            "rafah",
+            "vhmnet",
+            "wish",
+            "htp",
+            #"crispropendb"
+            ]
+    else:
+        TOOLS = [t for t in config["tools"]]
 
 
 rule split_multifasta:
