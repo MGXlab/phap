@@ -13,6 +13,17 @@ taxa_sqlite:
 # REQUIRED
 data_dir:
 
+
+# Select which tools to run
+# The default "all" string runs them all
+# If you want to run a subset supply them as a list
+# For example, the following will run rafah and wish only
+# Tools are aliased as 'vhmnet', 'rafah', 'htp', 'wish', 'vhulk'
+# tools:
+#    - rafah
+#    - wish
+tools: all
+
 # PER TOOL CONFIGURATION
 # All fields required to be defined
 vhmnet:
