@@ -18,7 +18,7 @@ data_dir:
 # The default "all" string runs them all
 # If you want to run a subset supply them as a list
 # For example, the following will run rafah and wish only
-# Tools are aliased as 'vhmnet', 'rafah', 'htp', 'wish', 'vhulk'
+# Tools are aliased as 'vhmnet', 'rafah', 'htp', 'wish', 'vhulk', 'crispropendb'
 # tools:
 #    - rafah
 #    - wish
