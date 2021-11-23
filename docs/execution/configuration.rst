@@ -71,3 +71,27 @@ You can either fill in the location of the samplesheet within the ``config/confi
 or use ``snakemake``'s ``--config samplesheet=/path/to/my_samples.tsv`` mechanism when
 executing the wofkflow.
 
+
+Running specific tools
+----------------------
+
+You can select which tools to run with the ``tools`` configuration option.
+For example, if you only want to run RaFaH and HTP you can specify them as a 
+list for the ``tools`` configuration field 
+
+.. code-block:: yaml
+
+   tools:
+       - rafah
+       - htp
+
+This will skip the execution of the rest of the tools. Note that this list is 
+**inclusive**, meaning tools specified here will be executed.
+
+The string ``all`` can be specified to run all tools (default behavior)
+
+.. code-block:: yaml
+
+   tools: all
+
+
