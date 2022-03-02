@@ -52,7 +52,8 @@ if "tools" in config:
             "vhmnet",
             "wish",
             "htp",
-            "crispropendb"
+            "crispropendb",
+            "phist"
             ]
     else:
         TOOLS = [t for t in config["tools"]]
@@ -62,7 +63,8 @@ rule split_multifasta:
     input:
         get_sample_fasta
     output:
-        reflist = "results/{sample}/tmp/reflist.txt"
+        reflist = "results/{sample}/tmp/reflist.txt",
+        genomes_dir = directory("results/{sample}/tmp/genomes")
     log:
         "logs/{sample}/split_multifasta.log"
     params:
@@ -159,7 +161,7 @@ onsuccess:
 
         print('\t## CLEANUP ##\n')
         print('\tRemoving the per sample `tmp` directory...\n')
-        shell('rm -rf results/*/tmp')
+        #shell('rm -rf results/*/tmp')
         print('\t' + 76*'#')
 
         print('\t## REPORT ## \n')
