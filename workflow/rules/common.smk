@@ -63,8 +63,7 @@ rule split_multifasta:
     input:
         get_sample_fasta
     output:
-        reflist = "results/{sample}/tmp/reflist.txt",
-        genomes_dir = directory("results/{sample}/tmp/genomes")
+        reflist = "results/{sample}/tmp/reflist.txt"
     log:
         "logs/{sample}/split_multifasta.log"
     params:

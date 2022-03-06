@@ -2,19 +2,19 @@
 
 ## Features
 
-* Uses [Singularity](https://sylabs.io/) containers for the execution of all 
+* Uses [Singularity](https://sylabs.io/) containers for the execution of all
 tools.
 
-When possible (i.e. the image is not larger than a few `G`s), tools **and** 
+When possible (i.e. the image is not larger than a few `G`s), tools **and**
 their dependencies are bundled in the same container. This means
-you do not need to get models or any other external databases, unless 
+you do not need to get models or any other external databases, unless
 otherwise specified.
 
-* Intermediate processing steps are handled by [Conda](https://conda.io/en/latest/) 
+* Intermediate processing steps are handled by [Conda](https://conda.io/en/latest/)
 environments, to ensure smooth and reproducible execution.
 
 
-* Outputs the Last Common Ancestor of all tools, per contig, based on the 
+* Outputs the Last Common Ancestor of all tools, per contig, based on the
 predicted taxonomy.
 
 ## Tools
@@ -27,4 +27,4 @@ predicted taxonomy.
 | [VirHostMatcher-Net](https://github.com/WeiliWw/VirHostMatcher-Net)   | [Wang W. et al. 2020](https://doi.org/10.1093/nargab/lqaa044)                                     | ok                  |
 | [WIsH](https://github.com/soedinglab/WIsH)                            | [Galiez G. et al. 2017](https://academic.oup.com/bioinformatics/article/33/19/3113/3964377)       | ok (unnecessary?)   |
 | [CrisprOpenDB](https://github.com/edzuf/CrisprOpenDB)                 | [Dion M. et al. 2021](https://doi.org/10.1093/nar/gkab133)                                        | ok                  |
-
+| [PHIST](https://github.com/refresh-bio/PHIST) | [Zielezinski A. et al. 2022](https://academic.oup.com/bioinformatics/article/38/5/1447/6460800?login=false) | ok

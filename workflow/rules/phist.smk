@@ -1,13 +1,14 @@
 rule run_phist:
     input:
-        genomes_dir = rules.split_multifasta.output.genomes_dir
+        reflist = rules.split_multifasta.output.reflist
     output:
         raw_predictions = "results/{sample}/phist/raw_predictions.tsv",
         kmers_table = "results/{sample}/phist/kmers_table.txt"
     log:
         stderr = "logs/{sample}/phist.stderr"
     params:
-        hosts_db_genomes = "/data3/hosts_genomes",
+        genomes_dir = "results/{sample}/tmp/genomes",
+        hosts_db_genomes = "/data3",
 
     container:
         config['phist'].get('container')
@@ -17,25 +18,27 @@ rule run_phist:
         """
         python /PHIST/phist.py \
             -t {threads} \
-            {input.genomes_dir} \
-            {params.host_db_genomes} \
-            {output.phist_raw_pred} \
-            {output.phist_raw_table}
+            {params.genomes_dir} \
+            {params.hosts_db_genomes} \
+            {output.kmers_table} \
+            {output.raw_predictions} 2> {log.stderr}
         """
 
 rule process_phist:
     input:
-        prediction_list = rules.run_phist.output.raw_predictions
+        prediction_list = rules.run_phist.output.raw_predictions,
+        reflist = rules.split_multifasta.output.reflist
     output:
         predictions_tsv = "results/{sample}/phist/predictions.tsv"
     params:
-        hosts_db_taxonomy = "/data3/hosts_taxonomy.txt",
+        hosts_db_taxonomy = config["phist"].get("taxids_file"),
         scrpt = srcdir("../scripts/phist_add_taxonomy.py")
     log:
-        "logs/{sample}/process_wish.log"
+        "logs/{sample}/process_phist.log"
     conda:
         "../envs/phap_utils.yaml"
+
     shell:
         "python {params.scrpt} "
         "-i {input.prediction_list} -t {params.hosts_db_taxonomy} "
-        "-o {output.predictions_tsv} 2>{log}"
+        "-r {input.reflist} -o {output.predictions_tsv} 2>{log}"

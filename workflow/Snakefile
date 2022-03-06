@@ -13,12 +13,11 @@ include: "rules/phist.smk"
 rule all:
     input:
         expand([
-            "results/{sample}/phist/predictions.tsv"
             #"results/{sample}/tmp/reflist.txt",
-            # "results/{sample}/{tool}/predictions.tsv",
-            # "results/{sample}/all_predictions.tsv",
-            # "results/{sample}/lca.tsv",
-            # "report/{sample}_all.html",
-            # "report/{sample}_lca.html",
+            "results/{sample}/{tool}/predictions.tsv",
+            "results/{sample}/all_predictions.tsv",
+            "results/{sample}/lca.tsv",
+            "report/{sample}_all.html",
+            "report/{sample}_lca.html",
             ],
             sample=SAMPLES, tool= TOOLS)

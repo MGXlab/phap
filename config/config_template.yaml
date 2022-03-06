@@ -19,6 +19,7 @@ data_dir:
 # If you want to run a subset supply them as a list
 # For example, the following will run rafah and wish only
 # Tools are aliased as 'vhmnet', 'rafah', 'htp', 'wish', 'vhulk', 'crispropendb'
+# and 'phist'. You could run a subset of the tools like this:
 # tools:
 #    - rafah
 #    - wish
@@ -65,4 +66,5 @@ crispropendb:
 
 phist:
     container: "library://dcarrillo/default/phist:1.0.0"
-    threads: 8
+    taxids_file: 
+    threads: 12
