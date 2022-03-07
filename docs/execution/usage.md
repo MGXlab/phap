@@ -23,7 +23,7 @@ A dry-run (_always a good idea before each execution_)
 ```
 
 where `/path/to/<TOOL>/data` are directories containing the databases for the
-different tools as explained in `installation-data`_.
+different tools as explained in the Installation section.
 
 * The `-j` flag controls the number of jobs (cores) to be run in parallel.
 Change this according to your setup.

@@ -127,23 +127,25 @@ folder containing genome assemblies of the candidate hosts in FASTA format, one
 file per species. A file describing the taxonomy for these genomes is also
 required.
 
-For development, we used a subset of RefSeq containing [bacterial and archaeal
-reference and representative sequences](https://www.ncbi.nlm.nih.gov/assembly/?term=(Bacteria%5Borgn%5D+OR+Archaea%5Borgn%5D)+AND+(reference_genome%5Bfilter%5D+OR+representative_genome%5Bfilter%5D)).
+For development, we used a subset of RefSeq containing `bacterial and archaeal
+reference and representative sequences <https://www.ncbi.nlm.nih.gov/assembly/?term=(Bacteria%5Borgn%5D+OR+Archaea%5Borgn%5D)+AND+(reference_genome%5Bfilter%5D+OR+representative_genome%5Bfilter%5D)>`_.
 If you wish to use this database, we provide ``resources/phist_genomes_download.txt``
 with the commands to download the genomes (14,983 bacterial + 511 archaeal
 genomes, listed on March 4 2022). Taxonomy in the form of taxid can be found
 under ``resources/phist_genomes_taxids.txt``.
 
+`ETE3's page <http://etetoolkit.org/docs/latest/tutorial/tutorial_ncbitaxonomy.html>`_.
+
 .. code-block:: bash:
 
    # Create directory to store the genomes.
-   $ mkdir -p phist_db/hosts_genomes
+   $ mkdir refseq_repr-ref_march2022
 
    # Download genomes using parallel and 5 CPUs
    $ parallel --joblog download.log -j 5 :::: phist_genomes_download.txt
 
-If you want to run this tool, the  directory containing the genomes 
-(``hosts_genomes`` in example above) must be supplied separately as a mount
+If you want to run this tool, the  directory containing the genomes
+(``refseq_repr-ref_march2022`` in example above) must be supplied separately as a mount
 point for singularity ``data3``.
 
 Taxonomy file must be a two-columns tabular file containing the name of the
