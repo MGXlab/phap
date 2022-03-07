@@ -1,0 +1,26 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%labels
+	Author "A Zielinski, S. Deorowicz, A. Gudys"
+	Maintainer and edits dcarrillox
+	Version 1.0.0
+	Source https://github.com/refresh-bio/PHIST
+	Publication https://academic.oup.com/bioinformatics/article/38/5/1447/6460800
+
+%files
+	PHIST/* PHIST/
+	
+%post
+	# update OS
+	apt update && apt upgrade -y
+	
+	apt install -y libgomp1
+
+%help
+	A container for PHIST  v1.0.0
+	[https://github.com/edzuf/CrisprOpenDB].
+
+	To run PHIST help:
+
+	$ singularity run library://dcarrillo/default/phist:1.0.0 python /PHIST/phist.py -h

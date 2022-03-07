@@ -160,7 +160,7 @@ onsuccess:
 
         print('\t## CLEANUP ##\n')
         print('\tRemoving the per sample `tmp` directory...\n')
-        #shell('rm -rf results/*/tmp')
+        shell('rm -rf results/*/tmp')
         print('\t' + 76*'#')
 
         print('\t## REPORT ## \n')
