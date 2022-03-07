@@ -52,7 +52,8 @@ if "tools" in config:
             "vhmnet",
             "wish",
             "htp",
-            "crispropendb"
+            "crispropendb",
+            "phist"
             ]
     else:
         TOOLS = [t for t in config["tools"]]

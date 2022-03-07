@@ -10,7 +10,7 @@ import sys
 def parse_arguments():
     parser = argparse.ArgumentParser(
         description="Parse all_predictions.tsv to get LCA",
-        formatter_class= argparse.ArgumentDefaultsHelpFormatter                
+        formatter_class= argparse.ArgumentDefaultsHelpFormatter
     )
     optionalArgs = parser._action_groups.pop()
     optionalArgs.title = "Optional Arguments"
@@ -95,7 +95,6 @@ def translate_row(name_row):
     """
     return [get_taxid(i) for i in name_row]
 
-
 def all_equal(iterable):
     # https://docs.python.org/3/library/itertools.html#itertools-recipes
     """
@@ -103,7 +102,6 @@ def all_equal(iterable):
     """
     g = itertools.groupby(iterable)
     return next(g, True) and not next(g, False)
-
 
 def get_lca_dic(hosts_df, ncbi):
     """
@@ -113,7 +111,7 @@ def get_lca_dic(hosts_df, ncbi):
     column corresponding to full taxonomy lists.
 
     Args:
-      hosts_df: pd.DataFrame: Contigs as index, columns 
+      hosts_df: pd.DataFrame: Contigs as index, columns
         lists of full taxonomies
       ncbi: ete3.NCBITaxa instance:
 
@@ -189,4 +187,3 @@ if __name__ == '__main__':
         for i in lca_data:
             dstring = '\t'.join(map(str, lca_data[i]))
             fout.write("{}\t{}\n".format(i, dstring))
-

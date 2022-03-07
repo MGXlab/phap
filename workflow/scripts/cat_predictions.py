@@ -65,7 +65,7 @@ if __name__ == '__main__':
         if tsv.parent.name == 'htp':
             htp_df = htp_to_df(tsv)
             results_dfs.append(htp_df)
-        elif tsv.parent.name in ['vhmnet', 'rafah', 'vhulk', 'wish', 'crispropendb']:
+        elif tsv.parent.name in ['vhmnet', 'rafah', 'vhulk', 'wish', 'crispropendb', 'phist']:
             tool_df = predictions_tsv_to_df(tsv, tsv.parent.name)
             results_dfs.append(tool_df)
 #            tool_name = tsv.parent.name

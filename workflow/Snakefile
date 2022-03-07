@@ -8,6 +8,7 @@ include: "rules/vhmnet.smk"
 include: "rules/htp.smk"
 include: "rules/wish.smk"
 include: "rules/crispropendb.smk"
+include: "rules/phist.smk"
 
 rule all:
     input:
