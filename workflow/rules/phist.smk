@@ -2,8 +2,8 @@ rule run_phist:
     input:
         reflist = rules.split_multifasta.output.reflist
     output:
-        raw_predictions = "results/{sample}/phist/raw_predictions.tsv",
-        kmers_table = "results/{sample}/phist/kmers_table.txt"
+        raw_predictions = "results/{sample}/phist/raw.txt",
+        kmers_table = "results/{sample}/phist/common_kmers.csv"
     log:
         stderr = "logs/{sample}/phist.stderr"
     params:
